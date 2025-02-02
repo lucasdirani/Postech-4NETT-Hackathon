@@ -1,21 +1,19 @@
+using Postech.Hackathon.Agendamentos.Dominio.Excecoes.Comum;
+using Postech.Hackathon.Agendamentos.Dominio.Extensoes.Comum;
+
 namespace Postech.Hackathon.Agendamentos.Dominio.Entidades;
 
-public class Agendamento : EntidadeBase
+public class Agendamento(
+    Guid idMedico,
+    DateOnly dataAgendamento,
+    TimeSpan horarioInicioAgendamento,
+    TimeSpan horarioFimAgendamento) : EntidadeBase
 {
-    public Agendamento(
-        Guid idMedico, 
-        DateOnly dataAgendamento, 
-        TimeSpan horarioInicioAgendamento, 
-        TimeSpan horarioFimAgendamento)
-    {
-        IdMedico = idMedico;
-        Data = dataAgendamento;
-        HorarioInicio = horarioInicioAgendamento;
-        HorarioFim = horarioFimAgendamento;
-    }
-
-    public Guid IdMedico { get; private set; }
-    public DateOnly Data { get; private set; }
-    public TimeSpan HorarioInicio { get; private set; }
-    public TimeSpan HorarioFim { get; private set; }
+    public Guid IdMedico { get; private set; } = idMedico.EstaVazio() 
+        ? throw new ExcecaoDominio("O identificador do médico é obrigatório", nameof(Agendamento), nameof(IdMedico)) 
+        : idMedico;
+        
+    public DateOnly Data { get; private set; } = dataAgendamento;
+    public TimeSpan HorarioInicio { get; private set; } = horarioInicioAgendamento;
+    public TimeSpan HorarioFim { get; private set; } = horarioFimAgendamento;
 }

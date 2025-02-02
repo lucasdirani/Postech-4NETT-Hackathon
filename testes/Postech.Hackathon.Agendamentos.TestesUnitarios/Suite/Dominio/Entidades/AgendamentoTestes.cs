@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Postech.Hackathon.Agendamentos.Dominio.Entidades;
+using Postech.Hackathon.Agendamentos.Dominio.Excecoes.Comum;
 
 namespace Postech.Hackathon.Agendamentos.TestesUnitarios.Suite.Dominio.Entidades;
 
@@ -26,5 +27,24 @@ public class AgendamentoTestes
         agendamento.Data.Should().Be(dataAgendamento);
         agendamento.HorarioInicio.Should().Be(horarioInicioAgendamento);
         agendamento.HorarioFim.Should().Be(horarioFimAgendamento);
+    }
+
+    [Fact(DisplayName = "Identificador inválido para o médico que cadastrou o agendamento")]
+    [Trait("Action", "Agendamento")]
+    public void Agendamento_IdMedicoComValorInvalido_DeveLancarExcecaoDeDominio()
+    {
+        // Arrange
+        Guid idMedico = Guid.Empty;
+        DateOnly dataAgendamento = new(2025, 2, 1);
+        TimeSpan horarioInicioAgendamento = new(15, 0, 0);
+        TimeSpan horarioFimAgendamento = new(15, 30, 0);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento));
+        excecao.Propriedade.Should().Be(nameof(Agendamento.IdMedico));
     }
 }
