@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Postech.Hackathon.Agendamentos.Dominio.Entidades;
+using Postech.Hackathon.Agendamentos.Dominio.Excecoes.Comum;
 using Postech.Hackathon.Agendamentos.Dominio.Servicos;
 
 namespace Postech.Hackathon.Agendamentos.TestesUnitarios.Suite.Dominio.Servicos;
@@ -222,5 +223,34 @@ public class ServicoAgendamentoTestes
 
         // Assert
         possuiConflito.Should().BeTrue();
+    }
+
+    [Fact(DisplayName = "Agendamentos com datas diferentes")]
+    [Trait("Action", "ValidarConflitoHorarioAgendamento")]
+    public void ValidarConflitoHorarioAgendamento_AgendamentosComDatasDiferentes_DeveLancarExcecaoDeDominio()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        IReadOnlyList<Agendamento> agendamentos =
+        [
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(9, 0, 0), horarioFimAgendamento: new(9, 30, 0), dataAtual),
+            new(idMedico, dataAgendamento: new(2025, 2, 3), horarioInicioAgendamento: new(9, 30, 0), horarioFimAgendamento: new(10, 0, 0), dataAtual),
+            new(idMedico, dataAgendamento: new(2025, 2, 3), horarioInicioAgendamento: new(10, 0, 0), horarioFimAgendamento: new(10, 30, 0), dataAtual),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(10, 30, 0), horarioFimAgendamento: new(11, 0, 0), dataAtual),
+            new(idMedico, dataAgendamento: new(2025, 2, 3), horarioInicioAgendamento: new(11, 0, 0), horarioFimAgendamento: new(11, 30, 0), dataAtual),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(15, 0, 0), horarioFimAgendamento: new(15, 30, 0), dataAtual),
+            new(idMedico, dataAgendamento: new(2025, 2, 4), horarioInicioAgendamento: new(15, 30, 0), horarioFimAgendamento: new(16, 0, 0), dataAtual)
+        ];
+        TimeSpan horarioInicioNovoAgendamento = new(16, 0, 0);
+        TimeSpan horarioFimNovoAgendamento = new(16, 30, 0);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => _servico.ValidarConflitoHorarioAgendamento(agendamentos, horarioInicioNovoAgendamento, horarioFimNovoAgendamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(ServicoAgendamento.ValidarConflitoHorarioAgendamento));
+        excecao.Propriedade.Should().Be(nameof(Agendamento.Data));
     }
 }
