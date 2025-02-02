@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Postech.Hackathon.Agendamentos.Dominio\Postech.Hackathon.Agendamentos.Dominio.csproj" />
+    <ProjectReference Include="..\..\src\Postech.Hackathon.Agendamentos.Aplicacao\Postech.Hackathon.Agendamentos.Aplicacao.csproj" />
   </ItemGroup>
 
 </Project>
