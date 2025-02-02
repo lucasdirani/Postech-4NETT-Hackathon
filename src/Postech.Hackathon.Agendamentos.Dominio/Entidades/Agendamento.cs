@@ -18,6 +18,9 @@ public class Agendamento(
         ? throw new ExcecaoDominio("A data de agendamento deve ser igual ou maior do que a data atual", nameof(Agendamento), nameof(Data))
         : dataAgendamento;
 
-    public TimeSpan HorarioInicio { get; private set; } = horarioInicioAgendamento;
+    public TimeSpan HorarioInicio { get; private set; } = horarioInicioAgendamento > horarioFimAgendamento
+        ? throw new ExcecaoDominio("O horário de início deve ser menor do que o horário de fim", nameof(Agendamento), nameof(HorarioInicio))
+        : horarioInicioAgendamento;
+        
     public TimeSpan HorarioFim { get; private set; } = horarioFimAgendamento;
 }
