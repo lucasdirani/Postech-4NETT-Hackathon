@@ -70,7 +70,7 @@ public class AgendamentoTestes
         excecao.Propriedade.Should().Be(nameof(Agendamento.Data));
     }
 
-    [Fact(DisplayName = "Horário de início posterior ao horário de fim")]
+    [Fact(DisplayName = "Horário de início posterior ao horário de fim do agendamento")]
     [Trait("Action", "Agendamento")]
     public void Agendamento_HorarioInicioPosteriorHorarioFim_DeveLancarExcecaoDeDominio()
     {
@@ -80,6 +80,26 @@ public class AgendamentoTestes
         DateOnly dataAgendamento = new(2025, 2, 1);
         TimeSpan horarioInicioAgendamento = new(16, 0, 0);
         TimeSpan horarioFimAgendamento = new(15, 30, 0);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento));
+        excecao.Propriedade.Should().Be(nameof(Agendamento.HorarioInicio));
+    }
+
+    [Fact(DisplayName = "Horário de início no mesmo horário de fim do agendamento")]
+    [Trait("Action", "Agendamento")]
+    public void Agendamento_HorarioInicioMesmoHorarioFim_DeveLancarExcecaoDeDominio()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 1);
+        TimeSpan horarioInicioAgendamento = new(16, 0, 0);
+        TimeSpan horarioFimAgendamento = new(16, 0, 0);
 
         // Act
         ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual));
