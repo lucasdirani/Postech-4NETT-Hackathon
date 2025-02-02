@@ -37,7 +37,7 @@ public class AgendamentoTestes
         // Arrange
         Guid idMedico = Guid.Empty;
         DateOnly dataAtual = new(2025, 2, 1);
-        DateOnly dataAgendamento = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(15, 0, 0);
         TimeSpan horarioFimAgendamento = new(15, 30, 0);
 
@@ -70,6 +70,26 @@ public class AgendamentoTestes
         excecao.Propriedade.Should().Be(nameof(Agendamento.Data));
     }
 
+    [Fact(DisplayName = "Data do agendamento igual a data atual")]
+    [Trait("Action", "Agendamento")]
+    public void Agendamento_DataAgendamentoIgualDataAtual_DeveLancarExcecaoDeDominio()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 3);
+        DateOnly dataAgendamento = new(2025, 2, 3);
+        TimeSpan horarioInicioAgendamento = new(15, 0, 0);
+        TimeSpan horarioFimAgendamento = new(15, 30, 0);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento));
+        excecao.Propriedade.Should().Be(nameof(Agendamento.Data));
+    }
+
     [Fact(DisplayName = "Horário de início posterior ao horário de fim do agendamento")]
     [Trait("Action", "Agendamento")]
     public void Agendamento_HorarioInicioPosteriorHorarioFim_DeveLancarExcecaoDeDominio()
@@ -77,7 +97,7 @@ public class AgendamentoTestes
         // Arrange
         Guid idMedico = Guid.NewGuid();
         DateOnly dataAtual = new(2025, 2, 1);
-        DateOnly dataAgendamento = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(16, 0, 0);
         TimeSpan horarioFimAgendamento = new(15, 30, 0);
 
@@ -97,7 +117,7 @@ public class AgendamentoTestes
         // Arrange
         Guid idMedico = Guid.NewGuid();
         DateOnly dataAtual = new(2025, 2, 1);
-        DateOnly dataAgendamento = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(16, 0, 0);
         TimeSpan horarioFimAgendamento = new(16, 0, 0);
 
