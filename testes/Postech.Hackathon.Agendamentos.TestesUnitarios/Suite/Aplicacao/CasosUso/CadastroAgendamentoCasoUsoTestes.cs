@@ -2,6 +2,7 @@ using FluentAssertions;
 using Moq;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Entradas;
+using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Enumeradores;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Saidas;
 using Postech.Hackathon.Agendamentos.Dominio.Entidades;
 using Postech.Hackathon.Agendamentos.Dominio.Repositorios;
@@ -44,7 +45,45 @@ public class CadastroAgendamentoCasoUsoTestes
 
         // Assert
         saida.IdAgendamento.Should().NotBeEmpty();
+        saida.SituacaoCadastroAgendamento.Should().Be(SituacaoCadastroAgendamento.Sucesso);
         repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, dataAgendamento), Times.Once());
         repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Once());
+    }
+
+    [Fact(DisplayName = "Cadastrar agendamento com conflito")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_CadastrarAgendamentoComConflito_NaoDeveCadastrarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        DateOnly dataAtual = new(2025, 2, 1);
+        CadastroAgendamentoEntrada entrada = new()
+        {
+            IdMedico = idMedico,
+            DataAtual = dataAtual,
+            DataAgendamento = dataAgendamento,
+            HorarioInicioAgendamento = new TimeSpan(12, 0, 0),
+            HorarioFimAgendamento = new TimeSpan(12, 30, 0)
+        };
+        Mock<IRepositorioAgendamento> repositorio = new();  
+        repositorio
+            .Setup(r => r.ConsultarAgendamentosMedicoAsync(idMedico, dataAgendamento))
+            .ReturnsAsync(() =>
+            [
+                new Agendamento(idMedico, dataAgendamento, new(11, 0, 0), new(11, 30, 0), dataAtual),
+                new Agendamento(idMedico, dataAgendamento, new(11, 30, 0), new(12, 0, 0), dataAtual),
+                new Agendamento(idMedico, dataAgendamento, new(12, 0, 0), new(12, 30, 0), dataAtual),
+            ]);
+        CadastroAgendamentoCasoUso casoUso = new(repositorio.Object, new ServicoAgendamento());
+
+        // Act
+        CadastroAgendamentoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.IdAgendamento.Should().BeEmpty();
+        saida.SituacaoCadastroAgendamento.Should().Be(SituacaoCadastroAgendamento.Conflito);
+        repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, dataAgendamento), Times.Once());
+        repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
     }
 }
