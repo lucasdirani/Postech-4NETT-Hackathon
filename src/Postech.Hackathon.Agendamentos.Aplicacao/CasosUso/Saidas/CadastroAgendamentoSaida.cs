@@ -8,4 +8,5 @@ public record CadastroAgendamentoSaida
 {
     public Guid IdAgendamento { get; init; }
     public SituacaoCadastroAgendamento SituacaoCadastroAgendamento { get; init; }
+    public string? Mensagem { get; init; }
 }

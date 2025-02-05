@@ -4,4 +4,5 @@ public enum SituacaoCadastroAgendamento
 {
     Conflito,
     Sucesso,
+    DadosInvalidos,
 }

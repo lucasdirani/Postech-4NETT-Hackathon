@@ -90,4 +90,37 @@ public class CadastroAgendamentoCasoUsoTestes
         repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, dataAgendamento), Times.Once());
         repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
     }
+
+    [Fact(DisplayName = "Cadastrar agendamento sem o médico responsável")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_CadastrarAgendamentoSemMedicoResponsavel_NaoDeveCadastrarAgendamento()
+    {
+        // Arrange
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        DateOnly dataAtual = new(2025, 2, 1);
+        decimal valorAgendamento = 100;
+        CadastroAgendamentoEntrada entrada = new()
+        {
+            IdMedico = Guid.Empty,
+            DataAtual = dataAtual,
+            DataAgendamento = dataAgendamento,
+            HorarioInicioAgendamento = new TimeSpan(12, 0, 0),
+            HorarioFimAgendamento = new TimeSpan(12, 30, 0),
+            ValorAgendamento = valorAgendamento
+        };
+        Mock<IRepositorioAgendamento> repositorio = new();  
+        repositorio
+            .Setup(r => r.ConsultarAgendamentosMedicoAsync(Guid.Empty, dataAgendamento))
+            .ReturnsAsync(() => []);
+        CadastroAgendamentoCasoUso casoUso = new(repositorio.Object, new ServicoAgendamento());
+
+        // Act
+        CadastroAgendamentoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.IdAgendamento.Should().BeEmpty();
+        saida.SituacaoCadastroAgendamento.Should().Be(SituacaoCadastroAgendamento.DadosInvalidos);
+        saida.Mensagem.Should().NotBeNullOrEmpty();
+        repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
+    }
 }
