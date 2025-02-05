@@ -1,3 +1,4 @@
+using Postech.Hackathon.Agendamentos.Dominio.Enumeradores;
 using Postech.Hackathon.Agendamentos.Dominio.Excecoes.Comum;
 using Postech.Hackathon.Agendamentos.Dominio.Extensoes.Comum;
 
@@ -34,6 +35,7 @@ public class Agendamento : EntidadeBase
         HorarioInicio = horarioInicioAgendamento;
         HorarioFim = horarioFimAgendamento;
         Valor = valorAgendamento;
+        Situacao = SituacaoAgendamento.Criado;
     }
 
     private Agendamento() {}
@@ -43,4 +45,5 @@ public class Agendamento : EntidadeBase
     public TimeSpan HorarioInicio { get; private set; }
     public TimeSpan HorarioFim { get; private set; }
     public decimal Valor { get; private set; }
+    public SituacaoAgendamento Situacao { get; private set; }
 }

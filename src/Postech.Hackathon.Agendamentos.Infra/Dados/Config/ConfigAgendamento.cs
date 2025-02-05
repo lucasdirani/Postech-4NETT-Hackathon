@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Postech.Hackathon.Agendamentos.Dominio.Entidades;
+using Postech.Hackathon.Agendamentos.Dominio.Enumeradores;
+using Postech.Hackathon.Agendamentos.Infra.Dados.Conversores;
 
 namespace Postech.Hackathon.Agendamentos.Infra.Dados.Config;
 
@@ -47,6 +49,13 @@ internal class ConfigAgendamento : IEntityTypeConfiguration<Agendamento>
             .Property(a => a.Valor)
             .HasColumnName("Valor")
             .HasColumnType("NUMERIC(8,2)")
+            .IsRequired();
+        builder
+            .Property(a => a.Situacao)
+            .HasConversion(new ConversorDescricaoEnumParaString<SituacaoAgendamento>())
+            .HasColumnType("varchar")
+            .HasMaxLength(9)
+            .HasColumnName("Situacao")
             .IsRequired();
         builder
             .HasIndex(a => new { a.IdMedico, a.Data })

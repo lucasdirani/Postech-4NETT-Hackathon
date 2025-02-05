@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Postech.Hackathon.Agendamentos.Dominio.Entidades;
+using Postech.Hackathon.Agendamentos.Dominio.Enumeradores;
 using Postech.Hackathon.Agendamentos.Dominio.Excecoes.Comum;
 
 namespace Postech.Hackathon.Agendamentos.TestesUnitarios.Suite.Dominio.Entidades;
@@ -30,6 +31,7 @@ public class AgendamentoTestes
         agendamento.HorarioInicio.Should().Be(horarioInicioAgendamento);
         agendamento.HorarioFim.Should().Be(horarioFimAgendamento);
         agendamento.Valor.Should().Be(valorAgendamento);
+        agendamento.Situacao.Should().Be(SituacaoAgendamento.Criado);
     }
 
     [Fact(DisplayName = "Identificador inválido para o médico que cadastrou o agendamento")]
