@@ -157,4 +157,42 @@ public class CadastroAgendamentoCasoUsoTestes
         saida.Mensagem.Should().NotBeNullOrEmpty();
         repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
     }
+
+    [Fact(DisplayName = "Cadastrar agendamento antes da data atual")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_CadastrarAntesDataAtual_NaoDeveCadastrarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        DateOnly dataAtual = new(2025, 2, 3);
+        decimal valorAgendamento = 150;
+        CadastroAgendamentoEntrada entrada = new()
+        {
+            IdMedico = idMedico,
+            DataAtual = dataAtual,
+            DataAgendamento = dataAgendamento,
+            HorarioInicioAgendamento = new TimeSpan(14, 0, 0),
+            HorarioFimAgendamento = new TimeSpan(14, 30, 0),
+            ValorAgendamento = valorAgendamento
+        };
+        Mock<IRepositorioAgendamento> repositorio = new();  
+        repositorio
+            .Setup(r => r.ConsultarAgendamentosMedicoAsync(idMedico, dataAgendamento))
+            .ReturnsAsync(() =>
+            [
+                new Agendamento(idMedico, dataAgendamento, new(11, 0, 0), new(11, 30, 0), dataAtual, valorAgendamento),
+                new Agendamento(idMedico, dataAgendamento, new(11, 30, 0), new(12, 0, 0), dataAtual, valorAgendamento),
+                new Agendamento(idMedico, dataAgendamento, new(12, 0, 0), new(12, 30, 0), dataAtual, valorAgendamento),
+            ]);
+        CadastroAgendamentoCasoUso casoUso = new(repositorio.Object, new ServicoAgendamento());
+
+        // Act
+        CadastroAgendamentoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.IdAgendamento.Should().BeEmpty();
+        saida.SituacaoCadastroAgendamento.Should().Be(SituacaoCadastroAgendamento.DadosInvalidos);
+        repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
+    }
 }
