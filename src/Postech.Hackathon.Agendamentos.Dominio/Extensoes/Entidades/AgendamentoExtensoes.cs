@@ -8,7 +8,7 @@ public static class AgendamentoExtensoes
 {
     public static bool TodosPossuemMesmaData(this IEnumerable<Agendamento> agendamentos)
     {
-        if (agendamentos.Any())
+        if (agendamentos is not null && agendamentos.Any())
         {
             DateOnly dataReferencia = agendamentos.ElementAt(0).Data;
             return agendamentos.All(a => a.Data == dataReferencia);
