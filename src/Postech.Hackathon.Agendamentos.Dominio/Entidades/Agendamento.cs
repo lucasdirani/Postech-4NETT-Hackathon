@@ -10,7 +10,8 @@ public class Agendamento : EntidadeBase
         DateOnly dataAgendamento,
         TimeSpan horarioInicioAgendamento,
         TimeSpan horarioFimAgendamento,
-        DateOnly dataAtual)
+        DateOnly dataAtual,
+        decimal valorAgendamento)
     {
         if (idMedico.EstaVazio())
         {
@@ -24,10 +25,15 @@ public class Agendamento : EntidadeBase
         {
             throw new ExcecaoDominio("O horário de início deve ser menor do que o horário de fim", nameof(Agendamento), nameof(HorarioInicio));
         }
+        if (valorAgendamento <= 0)
+        {
+            throw new ExcecaoDominio("O valor do agendamento deve ser maior do que zero", nameof(Agendamento), nameof(Valor));
+        }
         IdMedico = idMedico;
         Data = dataAgendamento;
         HorarioInicio = horarioInicioAgendamento;
         HorarioFim = horarioFimAgendamento;
+        Valor = valorAgendamento;
     }
 
     private Agendamento() {}
@@ -36,4 +42,5 @@ public class Agendamento : EntidadeBase
     public DateOnly Data { get; private set; }
     public TimeSpan HorarioInicio { get; private set; }
     public TimeSpan HorarioFim { get; private set; }
+    public decimal Valor { get; private set; }
 }

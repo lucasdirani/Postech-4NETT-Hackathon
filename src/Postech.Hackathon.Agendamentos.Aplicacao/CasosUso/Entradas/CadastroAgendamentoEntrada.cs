@@ -11,9 +11,10 @@ public record CadastroAgendamentoEntrada
     public DateOnly DataAgendamento { get; init; }
     public TimeSpan HorarioInicioAgendamento { get; init; }
     public TimeSpan HorarioFimAgendamento { get; init; }
+    public decimal ValorAgendamento { get; init; }
 
     internal Agendamento ConverterParaAgendamento()
     {
-        return new Agendamento(IdMedico, DataAgendamento, HorarioInicioAgendamento, HorarioFimAgendamento, DataAtual);
+        return new Agendamento(IdMedico, DataAgendamento, HorarioInicioAgendamento, HorarioFimAgendamento, DataAtual, ValorAgendamento);
     }
 }

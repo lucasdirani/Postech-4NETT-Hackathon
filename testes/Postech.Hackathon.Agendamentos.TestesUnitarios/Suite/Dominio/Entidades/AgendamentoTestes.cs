@@ -16,9 +16,10 @@ public class AgendamentoTestes
         DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(12, 0, 0);
         TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
 
         // Act
-        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
 
         // Assert
         agendamento.Should().NotBeNull();
@@ -28,6 +29,7 @@ public class AgendamentoTestes
         agendamento.Data.Should().Be(dataAgendamento);
         agendamento.HorarioInicio.Should().Be(horarioInicioAgendamento);
         agendamento.HorarioFim.Should().Be(horarioFimAgendamento);
+        agendamento.Valor.Should().Be(valorAgendamento);
     }
 
     [Fact(DisplayName = "Identificador inválido para o médico que cadastrou o agendamento")]
@@ -40,9 +42,10 @@ public class AgendamentoTestes
         DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(15, 0, 0);
         TimeSpan horarioFimAgendamento = new(15, 30, 0);
+        decimal valorAgendamento = 150;
 
         // Act
-        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual));
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento));
 
         // Assert
         excecao.Mensagem.Should().NotBeNullOrEmpty();
@@ -60,9 +63,10 @@ public class AgendamentoTestes
         DateOnly dataAgendamento = new(2025, 2, 1);
         TimeSpan horarioInicioAgendamento = new(15, 0, 0);
         TimeSpan horarioFimAgendamento = new(15, 30, 0);
+        decimal valorAgendamento = 100;
 
         // Act
-        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual));
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento));
 
         // Assert
         excecao.Mensagem.Should().NotBeNullOrEmpty();
@@ -80,9 +84,10 @@ public class AgendamentoTestes
         DateOnly dataAgendamento = new(2025, 2, 3);
         TimeSpan horarioInicioAgendamento = new(15, 0, 0);
         TimeSpan horarioFimAgendamento = new(15, 30, 0);
+        decimal valorAgendamento = 200;
 
         // Act
-        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual));
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento));
 
         // Assert
         excecao.Mensagem.Should().NotBeNullOrEmpty();
@@ -100,9 +105,10 @@ public class AgendamentoTestes
         DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(16, 0, 0);
         TimeSpan horarioFimAgendamento = new(15, 30, 0);
+        decimal valorAgendamento = 100;
 
         // Act
-        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual));
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento));
 
         // Assert
         excecao.Mensagem.Should().NotBeNullOrEmpty();
@@ -120,13 +126,35 @@ public class AgendamentoTestes
         DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(16, 0, 0);
         TimeSpan horarioFimAgendamento = new(16, 0, 0);
+        decimal valorAgendamento = 200;
 
         // Act
-        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual));
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento));
 
         // Assert
         excecao.Mensagem.Should().NotBeNullOrEmpty();
         excecao.Acao.Should().Be(nameof(Agendamento));
         excecao.Propriedade.Should().Be(nameof(Agendamento.HorarioInicio));
+    }
+
+    [Fact(DisplayName = "Valor inválido para o agendamento")]
+    [Trait("Action", "Agendamento")]
+    public void Agendamento_ValorInvalido_DeveLancarExcecaoDeDominio()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(15, 0, 0);
+        TimeSpan horarioFimAgendamento = new(15, 30, 0);
+        decimal valorAgendamento = 0;
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => new Agendamento(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento));
+        excecao.Propriedade.Should().Be(nameof(Agendamento.Valor));
     }
 }

@@ -44,6 +44,11 @@ internal class ConfigAgendamento : IEntityTypeConfiguration<Agendamento>
             .HasColumnType("time")
             .IsRequired();
         builder
+            .Property(a => a.Valor)
+            .HasColumnName("Valor")
+            .HasColumnType("NUMERIC(8,2)")
+            .IsRequired();
+        builder
             .HasIndex(a => new { a.IdMedico, a.Data })
             .HasDatabaseName("ix_tb_agendamentos_id_medico_data");
     }
