@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Hackathon.Agendamen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Hackathon.Agendamentos.TestesUnitarios", "..\testes\Postech.Hackathon.Agendamentos.TestesUnitarios\Postech.Hackathon.Agendamentos.TestesUnitarios.csproj", "{2374CAFD-5FDC-492E-84C6-5B24D3237FBF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Hackathon.Agendamentos.TestesIntegrados", "..\testes\Postech.Hackathon.Agendamentos.TestesIntegrados\Postech.Hackathon.Agendamentos.TestesIntegrados.csproj", "{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{2374CAFD-5FDC-492E-84C6-5B24D3237FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2374CAFD-5FDC-492E-84C6-5B24D3237FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2374CAFD-5FDC-492E-84C6-5B24D3237FBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
