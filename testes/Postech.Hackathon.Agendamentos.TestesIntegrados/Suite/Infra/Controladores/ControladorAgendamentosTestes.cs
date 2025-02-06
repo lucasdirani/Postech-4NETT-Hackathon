@@ -34,8 +34,27 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Created);
-        ComandoRespostaCadastroAgendamento? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaCadastroAgendamento>();
+        ComandoRespostaGenerico<ComandoRespostaCadastroAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaCadastroAgendamento>>();
         conteudoMensagemResposta.Should().NotBeNull();
-        conteudoMensagemResposta.IdAgendamento.Should().NotBeEmpty();
+        conteudoMensagemResposta.Dados.Should().NotBeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeTrue();
+        conteudoMensagemResposta.Mensagens.Should().BeNullOrEmpty();
+        conteudoMensagemResposta.Dados.IdAgendamento.Should().NotBeEmpty();
+    }
+
+    [Fact(DisplayName = "Corpo da requisição não fornecido no endpoint /agendamentos")]
+    [Trait("Action", "/agendamentos")]
+    public async Task Agendamentos_RequisicaoSemCorpoCadastroAgendamento_DeveRetornar400BadRequest()
+    {
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"/agendamentos"));
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        ComandoRespostaGenerico<ComandoRespostaCadastroAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaCadastroAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
     }
 }

@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos;
 using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos.Interfaces;
 using Postech.Hackathon.Agendamentos.Infra.Http.Deserializadores;
 using Postech.Hackathon.Agendamentos.Infra.Http.Deserializadores.Excecoes;
@@ -20,7 +21,7 @@ public class AdaptadorAspNetCore(WebApplication app) : IHttp
     public void On<TRequisicao, TResposta>(
         string metodo, 
         string url, 
-        Func<TRequisicao?, IDictionary<string, object?>, IServiceProvider, Task<TResposta>> callback)
+        Func<TRequisicao?, IDictionary<string, object?>, IServiceProvider, Task<ComandoRespostaGenerico<TResposta>>> callback)
         where TResposta : IComandoResposta
     {
         _app.MapMethods(url, [metodo.ToUpper()], async (HttpContext contexto, CancellationToken token) =>
@@ -30,10 +31,10 @@ public class AdaptadorAspNetCore(WebApplication app) : IHttp
                 string? corpoRequisicao = await new StreamReader(contexto.Request.Body).ReadToEndAsync(token);
                 TRequisicao? corpo = DeserializadorRequisicaoHttp.Deserializar<TRequisicao>(corpoRequisicao, contexto.Request.Headers.ContentType);
                 IDictionary<string, object?> valoresRota = contexto.Request.ObterValoresRota();
-                TResposta conteudoResposta = await callback(corpo, valoresRota, contexto.RequestServices);
+                ComandoRespostaGenerico<TResposta> conteudoResposta = await callback(corpo, valoresRota, contexto.RequestServices);
                 ResultadoSerializacaoRespostaHttp resultadoSerializacao = SerializadorRespostaHttp.Serializar(conteudoResposta, contexto.Request.Headers.Accept);
                 contexto.Response.ContentType = resultadoSerializacao.TipoConteudo;
-                contexto.Response.StatusCode = conteudoResposta.ObterCodigoResposta();
+                contexto.Response.StatusCode = conteudoResposta.CodigoResposta;
                 await contexto.Response.WriteAsync(resultadoSerializacao.Conteudo, token);
             }
             catch (ExcecaoDeserializadorRequisicaoHttp ex)

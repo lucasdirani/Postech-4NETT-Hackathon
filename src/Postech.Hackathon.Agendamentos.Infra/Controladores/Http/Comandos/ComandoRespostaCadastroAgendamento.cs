@@ -10,9 +10,4 @@ public record ComandoRespostaCadastroAgendamento : IComandoResposta
 {
     [JsonPropertyName("idAgendamento")]
     public Guid IdAgendamento { get; init; }
-
-    public int ObterCodigoResposta()
-    {
-        return (int) HttpStatusCode.Created;
-    }
 }
