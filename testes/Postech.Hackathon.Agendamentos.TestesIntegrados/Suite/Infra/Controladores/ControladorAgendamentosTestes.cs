@@ -1,3 +1,9 @@
+using System.Net;
+using System.Text;
+using System.Text.Json;
+using FluentAssertions;
+using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos;
+using Postech.Hackathon.Agendamentos.Infra.Http.Deserializadores.Extensoes;
 using Postech.Hackathon.Agendamentos.TestesIntegrados.Configuracoes.Base;
 using Postech.Hackathon.Agendamentos.TestesIntegrados.Fixtures;
 
@@ -5,6 +11,31 @@ namespace Postech.Hackathon.Agendamentos.TestesIntegrados.Suite.Infra.Controlado
 
 [Collection("Testes Integrados")]
 public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : BaseTesteIntegracao(fixture)
-{
+{        
+    [Fact(DisplayName = "Requisição para cadastrar um novo agendamento no endpoint /agendamentos")]
+    [Trait("Action", "/agendamentos")]
+    public async Task Agendamentos_RequisicaoValidaCadastroAgendamento_DeveRetornar201Created()
+    {
+        // Arrange
+        ComandoRequisicaoCadastroAgendamento comandoRequisicao = new()
+        {
+            IdMedico = Guid.NewGuid(),
+            Data = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
+            HoraInicio = new TimeSpan(12, 0, 0),
+            HoraFim = new TimeSpan(12, 30, 0),
+            Valor = 100
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"/agendamentos")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
 
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Created);
+        ComandoRespostaCadastroAgendamento? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaCadastroAgendamento>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.IdAgendamento.Should().NotBeEmpty();
+    }
 }

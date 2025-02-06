@@ -1,21 +1,26 @@
 using System.Diagnostics.CodeAnalysis;
+using Postech.Hackathon.Agendamentos.Api.Setup;
+using Postech.Hackathon.Agendamentos.Infra.Controladores.Http;
+using Postech.Hackathon.Agendamentos.Infra.Http.Adaptadores;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://*:5010");
+builder.Configuration.AdicionarArquivoJsonPeloAmbiente(builder.Environment.EnvironmentName);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AdicionarDependenciaServicoDominio();
+builder.Services.AdicionarDbContext(builder.Configuration);
+builder.Services.AdicionarDependenciaRepositorio();
+builder.Services.AdicionarDependenciaCasoUso();
 
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+WebApplication app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.Run();
+AdaptadorAspNetCore http = new(app);
+_ = new ControladorAgendamentos(http);
+http.Executar();
 
 [ExcludeFromCodeCoverage]
 public partial class Program

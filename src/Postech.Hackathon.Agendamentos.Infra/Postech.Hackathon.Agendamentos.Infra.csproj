@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.12">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Postech.Hackathon.Agendamentos.Dominio\Postech.Hackathon.Agendamentos.Dominio.csproj" />
+    <ProjectReference Include="..\Postech.Hackathon.Agendamentos.Aplicacao\Postech.Hackathon.Agendamentos.Aplicacao.csproj" />
   </ItemGroup>
 
 </Project>

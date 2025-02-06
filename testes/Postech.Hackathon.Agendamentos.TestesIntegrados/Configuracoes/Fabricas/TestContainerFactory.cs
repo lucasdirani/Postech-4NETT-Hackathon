@@ -16,7 +16,7 @@ public static class TestContainerFactory
                 .WithDatabase("bd_agendamentos")
                 .WithUsername("admin")
                 .WithPassword("12345")
-                .WithPortBinding("5433", "5433")
+                .WithPortBinding("5432", "5432")
                 .Build();
             await _container.StartAsync();
             ConnectionString = _container.GetConnectionString();
