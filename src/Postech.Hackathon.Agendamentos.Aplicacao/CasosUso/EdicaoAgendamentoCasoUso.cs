@@ -18,6 +18,7 @@ public class EdicaoAgendamentoCasoUso(IRepositorioAgendamento repositorio, IServ
     {
         Agendamento? agendamento = await _repositorio.ObterPorIdAsync(entrada.IdAgendamento);
         if (agendamento is null) return new() { SituacaoEdicaoAgendamento = SituacaoEdicaoAgendamento.AgendamentoNaoEncontrado, Mensagem = "Agendamento inexistente" };
+        if (!agendamento.PertenceMedico(entrada.IdMedico)) return new() { SituacaoEdicaoAgendamento = SituacaoEdicaoAgendamento.EdicaoNaoPermitida, Mensagem = "Edição não permitida" };
         agendamento.AlterarDataAgendamento(entrada.DataAgendamento, entrada.DataAtualizacao);
         agendamento.AlterarHorarioAgendamento(entrada.HorarioInicioAgendamento, entrada.HorarioFimAgendamento);
         agendamento.AlterarValorAgendamento(entrada.ValorAgendamento);

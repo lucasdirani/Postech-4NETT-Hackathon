@@ -4,4 +4,5 @@ public enum SituacaoEdicaoAgendamento
 {
     Sucesso,
     AgendamentoNaoEncontrado,
+    EdicaoNaoPermitida,
 }

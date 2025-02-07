@@ -121,4 +121,9 @@ public class Agendamento : EntidadeBase
         Valor = novoValorAgendamento;
         ModificadoEm = DateTime.UtcNow;
     }
+
+    public bool PertenceMedico(Guid idMedico)
+    {
+        return IdMedico == idMedico;
+    }
 }
