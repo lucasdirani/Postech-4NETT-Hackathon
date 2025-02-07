@@ -58,4 +58,37 @@ public class EdicaoAgendamentoCasoUsoTestes
         repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, novaDataAgendamento), Times.Once());
         repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Once());
     }
+
+    [Fact(DisplayName = "Editar agendamento não existente no sistema")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_EditarAgendamentoNaoExistente_NaoDeveEditarAgendamento()
+    {
+        // Arrange
+        Guid idAgendamentoNaoExistente = Guid.NewGuid();
+        Guid idMedico = Guid.NewGuid();
+        DateOnly novaDataAgendamento = new DateOnly(2025, 2, 8);
+        Mock<IRepositorioAgendamento> repositorio = new();  
+        repositorio.Setup(r => r.ObterPorIdAsync(idAgendamentoNaoExistente)).ReturnsAsync(() => null);
+        EdicaoAgendamentoEntrada entrada = new()
+        {
+            IdAgendamento = idAgendamentoNaoExistente,
+            IdMedico = idMedico,
+            DataAtualizacao = new DateOnly(2025, 2, 6),
+            DataAgendamento = novaDataAgendamento,
+            HorarioInicioAgendamento = new TimeSpan(11, 0, 0),
+            HorarioFimAgendamento = new TimeSpan(12, 0, 0),
+            ValorAgendamento = 100
+        };
+        EdicaoAgendamentoCasoUso casoUso = new(repositorio.Object, new ServicoAgendamento());
+
+        // Act
+        EdicaoAgendamentoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.SituacaoEdicaoAgendamento.Should().Be(SituacaoEdicaoAgendamento.AgendamentoNaoEncontrado);
+        saida.Mensagem.Should().NotBeNullOrEmpty();
+        repositorio.Verify(r => r.ObterPorIdAsync(idAgendamentoNaoExistente), Times.Once());
+        repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, novaDataAgendamento), Times.Never());
+        repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
+    }
 }

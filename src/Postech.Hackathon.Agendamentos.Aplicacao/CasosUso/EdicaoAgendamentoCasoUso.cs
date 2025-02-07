@@ -17,6 +17,7 @@ public class EdicaoAgendamentoCasoUso(IRepositorioAgendamento repositorio, IServ
     public async Task<EdicaoAgendamentoSaida> ExecutarAsync(EdicaoAgendamentoEntrada entrada)
     {
         Agendamento? agendamento = await _repositorio.ObterPorIdAsync(entrada.IdAgendamento);
+        if (agendamento is null) return new() { SituacaoEdicaoAgendamento = SituacaoEdicaoAgendamento.AgendamentoNaoEncontrado, Mensagem = "Agendamento inexistente" };
         agendamento.AlterarDataAgendamento(entrada.DataAgendamento, entrada.DataAtualizacao);
         agendamento.AlterarHorarioAgendamento(entrada.HorarioInicioAgendamento, entrada.HorarioFimAgendamento);
         agendamento.AlterarValorAgendamento(entrada.ValorAgendamento);
