@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Postech.Hackathon.Agendamentos.Dominio.Entidades;
+using Postech.Hackathon.Agendamentos.Dominio.Enumeradores;
 using Postech.Hackathon.Agendamentos.Dominio.Repositorios;
 using Postech.Hackathon.Agendamentos.Infra.Dados.Contextos;
 
@@ -15,6 +16,14 @@ public class RepositorioAgendamento(AgendamentoDbContext dbContext) : IRepositor
     public void Atualizar(Agendamento entidade)
     {
         _dbContext.Agendamentos.Update(entidade);
+    }
+
+    public async Task<IReadOnlyList<Agendamento>> ConsultarAgendamentosEfetuadosOuAceitosDoPacienteAsync(Guid idPaciente, DateOnly dataAgendamento)
+    {
+        return await _dbContext
+            .Agendamentos
+            .Where(a => a.IdPaciente == idPaciente && a.Data == dataAgendamento && (a.Situacao == SituacaoAgendamento.Aceito || a.Situacao == SituacaoAgendamento.Efetuado))
+            .ToListAsync();
     }
 
     public async Task<IReadOnlyList<Agendamento>> ConsultarAgendamentosMedicoAsync(Guid idMedico, DateOnly dataAgendamento)
