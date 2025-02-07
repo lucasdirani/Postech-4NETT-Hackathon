@@ -16,7 +16,7 @@ namespace Postech.Hackathon.Agendamentos.TestesIntegrados.Suite.Infra.Controlado
 public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : BaseTesteIntegracao(fixture)
 {        
     [Fact(DisplayName = "Requisição para cadastrar um novo agendamento no endpoint /agendamentos")]
-    [Trait("Action", "/agendamentos")]
+    [Trait("Action", "POST /agendamentos")]
     public async Task Agendamentos_RequisicaoValidaCadastroAgendamento_DeveRetornar201Created()
     {
         // Arrange
@@ -46,7 +46,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
     }
 
     [Fact(DisplayName = "Corpo da requisição não fornecido no endpoint /agendamentos")]
-    [Trait("Action", "/agendamentos")]
+    [Trait("Action", "POST /agendamentos")]
     public async Task Agendamentos_RequisicaoSemCorpoCadastroAgendamento_DeveRetornar400BadRequest()
     {
         // Act
@@ -62,7 +62,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
     }
 
     [Fact(DisplayName = "Tipo de conteúdo enviado para o endpoint /agendamentos não é suportado")]
-    [Trait("Action", "/agendamentos")]
+    [Trait("Action", "POST /agendamentos")]
     public async Task Agendamentos_TipoDeConteudoNaoSuportado_DeveRetornar415UnsupportedMediaType()
     {
         // Arrange
@@ -89,7 +89,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
     }
  
     [Fact(DisplayName = "Agendamento enviado para cadastro no endpoint /agendamentos está em conflito")]
-    [Trait("Action", "/agendamentos")]
+    [Trait("Action", "POST /agendamentos")]
     public async Task Agendamentos_CadastroAgendamentoEmConflito_DeveRetornar409Conflict()
     {
         // Arrange
@@ -133,7 +133,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
     }
 
     [Fact(DisplayName = "Requisição enviada com dados inválidos no endpoint /agendamentos")]
-    [Trait("Action", "/agendamentos")]
+    [Trait("Action", "POST /agendamentos")]
     public async Task Agendamentos_RequisicaoDadosInvalidos_DeveRetornar400BadRequest()
     {
         // Arrange
@@ -159,5 +159,45 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.Dados.Should().BeNull();
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
         conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Requisição para editar um agendamento no endpoint /agendamentos/{idAgendamento}")]
+    [Trait("Action", "PUT /agendamentos/{idAgendamento}")]
+    public async Task Agendamentos_RequisicaoValidaEdicaoAgendamento_DeveRetornar204NoContent()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoEdicaoAgendamento comandoRequisicao = new()
+        {
+            IdMedico = idMedico,
+            Data = DateOnly.FromDateTime(DateTime.Today.AddDays(4)),
+            DataAtualizacao = DateOnly.FromDateTime(DateTime.Today),
+            HoraInicio = new TimeSpan(9, 0, 0),
+            HoraFim = new TimeSpan(9, 30, 0),
+            Valor = 200
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Put, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        ComandoRespostaGenerico<ComandoRespostaEdicaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaEdicaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().NotBeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeTrue();
+        conteudoMensagemResposta.Mensagens.Should().BeNullOrEmpty();
     }
 }

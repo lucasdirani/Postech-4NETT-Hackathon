@@ -27,5 +27,12 @@ public class ControladorAgendamentos
             CadastroAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaCadastroAgendamentoEntrada());
             return AdaptadorCadastroAgendamento.Adaptar(saida);
         });
+        http.On<ComandoRequisicaoEdicaoAgendamento, ComandoRespostaEdicaoAgendamento>(HttpMethod.Put.ToString(), "/agendamentos/{idAgendamento}", async (corpo, valoresRota, serviceProvider) =>
+        {
+            IEdicaoAgendamentoCasoUso casoUso = serviceProvider.GetRequiredService<IEdicaoAgendamentoCasoUso>();
+            _ = Guid.TryParse(valoresRota["idAgendamento"]?.ToString(), out Guid idAgendamento);
+            EdicaoAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaEdicaoAgendamentoEntrada(idAgendamento));
+            return AdaptadorEdicaoAgendamento.Adaptar(saida);
+        });
     }
 }

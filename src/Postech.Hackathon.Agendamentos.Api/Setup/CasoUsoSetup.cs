@@ -10,5 +10,6 @@ internal static class CasoUsoSetup
     internal static void AdicionarDependenciaCasoUso(this IServiceCollection servicos)
     {
         servicos.AddScoped<ICadastroAgendamentoCasoUso, CadastroAgendamentoCasoUso>();
+        servicos.AddScoped<IEdicaoAgendamentoCasoUso, EdicaoAgendamentoCasoUso>();
     }
 }
