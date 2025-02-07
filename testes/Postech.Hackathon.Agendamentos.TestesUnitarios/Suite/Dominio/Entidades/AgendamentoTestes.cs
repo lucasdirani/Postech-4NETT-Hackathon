@@ -266,7 +266,8 @@ public class AgendamentoTestes
         TimeSpan horarioFimAgendamento = new(12, 30, 0);
         decimal valorAgendamento = 100;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.AceitarAgendamento();
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: new(2025, 2, 1));
+        agendamento.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 1));
         DateOnly novaDataAgendamento = new(2025, 2, 3);
         DateOnly dataAtualizacaoAgendamento = new(2025, 2, 2);
 
@@ -413,7 +414,8 @@ public class AgendamentoTestes
         TimeSpan horarioFimAgendamento = new(12, 30, 0);
         decimal valorAgendamento = 100;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.AceitarAgendamento();
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: new(2025, 2, 1));
+        agendamento.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 1));
         TimeSpan novoHorarioInicioAgendamento = new(14, 0, 0);
         TimeSpan novoHorarioFimAgendamento = new(14, 30, 0);
 
@@ -531,7 +533,8 @@ public class AgendamentoTestes
         TimeSpan horarioFimAgendamento = new(12, 30, 0);
         decimal valorAgendamento = 100;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.AceitarAgendamento();
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: new(2025, 2, 1));
+        agendamento.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 1));
         decimal novoValorAgendamento = 150;
 
         // Act
@@ -628,6 +631,7 @@ public class AgendamentoTestes
         agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento);
 
         // Assert
+        agendamento.Situacao.Should().Be(SituacaoAgendamento.Efetuado);
         agendamento.IdPaciente.Should().Be(idPaciente);
         agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
     }
@@ -646,7 +650,8 @@ public class AgendamentoTestes
         TimeSpan horarioFimAgendamento = new(12, 30, 0);
         decimal valorAgendamento = 100;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.AceitarAgendamento();
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento);
+        agendamento.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 1));
 
         // Act
         ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento));
@@ -727,5 +732,28 @@ public class AgendamentoTestes
         excecao.Mensagem.Should().NotBeNullOrEmpty();
         excecao.Acao.Should().Be(nameof(Agendamento.EfetuarAgendamento));
         excecao.Propriedade.Should().Be(nameof(dataEfetuacaoAgendamento));
+    }
+
+    [Fact(DisplayName = "Aceitar agendamento com situação válida")]
+    [Trait("Action", "AceitarAgendamento")]
+    public void AceitarAgendamento_AgendamentoComSituacaoValida_DeveAceitarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: new(2025, 2, 1));
+
+        // Act
+        agendamento.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 1));
+
+        // Assert
+        agendamento.Situacao.Should().Be(SituacaoAgendamento.Aceito);
+        agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
     }
 }

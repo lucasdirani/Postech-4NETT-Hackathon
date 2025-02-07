@@ -266,7 +266,8 @@ public class EdicaoAgendamentoCasoUsoTestes
         decimal valorAgendamento = 100;
         decimal novoValorAgendamento = 50;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.AceitarAgendamento();
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: new(2025, 2, 5));
+        agendamento.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 5));
         Mock<IRepositorioAgendamento> repositorio = new();  
         repositorio.Setup(r => r.ObterPorIdAsync(agendamento.Id)).ReturnsAsync(() => agendamento);
         EdicaoAgendamentoEntrada entrada = new()

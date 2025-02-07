@@ -30,7 +30,8 @@ public class EfetuacaoAgendamentoCasoUsoTestes
         Agendamento agendamentoEfetuado = new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 7), horarioInicioAgendamento: new(8, 0, 0), horarioFimAgendamento: new(8, 30, 0), dataAtual: new(2025, 2, 1), valorAgendamento: 100);
         agendamentoEfetuado.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 5));
         Agendamento agendamentoAceito = new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 7), horarioInicioAgendamento: new(15, 0, 0), horarioFimAgendamento: new(15, 30, 0), dataAtual: new(2025, 2, 5), valorAgendamento: 100);
-        agendamentoAceito.AceitarAgendamento();
+        agendamentoAceito.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 5));
+        agendamentoAceito.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 5));
         repositorio
             .Setup(r => r.ConsultarAgendamentosEfetuadosOuAceitosDoPacienteAsync(idPaciente, dataAgendamento))
             .ReturnsAsync(() => [ agendamentoEfetuado, agendamentoAceito ]);
@@ -97,7 +98,8 @@ public class EfetuacaoAgendamentoCasoUsoTestes
         Mock<IRepositorioAgendamento> repositorio = new();  
         repositorio.Setup(r => r.ObterPorIdAsync(agendamentoSendoEfetuado.Id)).ReturnsAsync(() => agendamentoSendoEfetuado);
         Agendamento agendamentoAceito = new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 7), horarioInicioAgendamento: new(12, 0, 0), horarioFimAgendamento: new(13, 0, 0), dataAtual: new(2025, 2, 5), valorAgendamento: 100);
-        agendamentoAceito.AceitarAgendamento();
+        agendamentoAceito.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 5));
+        agendamentoAceito.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 5));
         repositorio
             .Setup(r => r.ConsultarAgendamentosEfetuadosOuAceitosDoPacienteAsync(idPaciente, dataAgendamento))
             .ReturnsAsync(() => [ agendamentoAceito ]);
@@ -134,11 +136,9 @@ public class EfetuacaoAgendamentoCasoUsoTestes
         Agendamento agendamentoSendoEfetuado = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
         Mock<IRepositorioAgendamento> repositorio = new();  
         repositorio.Setup(r => r.ObterPorIdAsync(agendamentoSendoEfetuado.Id)).ReturnsAsync(() => agendamentoSendoEfetuado);
-        Agendamento agendamentoAceito = new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 7), horarioInicioAgendamento: new(16, 0, 0), horarioFimAgendamento: new(17, 0, 0), dataAtual: new(2025, 2, 5), valorAgendamento: 100);
-        agendamentoAceito.AceitarAgendamento();
         repositorio
             .Setup(r => r.ConsultarAgendamentosEfetuadosOuAceitosDoPacienteAsync(idPaciente, dataAgendamento))
-            .ReturnsAsync(() => [ agendamentoAceito ]);
+            .ReturnsAsync(() => []);
         EfetuacaoAgendamentoEntrada entrada = new()
         {
             IdAgendamento = agendamentoSendoEfetuado.Id,
@@ -174,7 +174,8 @@ public class EfetuacaoAgendamentoCasoUsoTestes
         Mock<IRepositorioAgendamento> repositorio = new();  
         repositorio.Setup(r => r.ObterPorIdAsync(agendamentoSendoEfetuado.Id)).ReturnsAsync(() => agendamentoSendoEfetuado);
         Agendamento agendamentoAceito = new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 7), horarioInicioAgendamento: new(16, 0, 0), horarioFimAgendamento: new(17, 0, 0), dataAtual: new(2025, 2, 5), valorAgendamento: 100);
-        agendamentoAceito.AceitarAgendamento();
+        agendamentoAceito.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 5));
+        agendamentoAceito.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 5));
         repositorio
             .Setup(r => r.ConsultarAgendamentosEfetuadosOuAceitosDoPacienteAsync(idPaciente, dataAgendamento))
             .ReturnsAsync(() => [ agendamentoAceito ]);
@@ -211,7 +212,7 @@ public class EfetuacaoAgendamentoCasoUsoTestes
         decimal valorAgendamento = 100;
         Agendamento agendamentoSendoEfetuado = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
         agendamentoSendoEfetuado.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: new(2025, 2, 5));
-        agendamentoSendoEfetuado.AceitarAgendamento();
+        agendamentoSendoEfetuado.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 5));
         Mock<IRepositorioAgendamento> repositorio = new();  
         repositorio.Setup(r => r.ObterPorIdAsync(agendamentoSendoEfetuado.Id)).ReturnsAsync(() => agendamentoSendoEfetuado);
         repositorio

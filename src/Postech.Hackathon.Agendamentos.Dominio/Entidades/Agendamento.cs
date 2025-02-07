@@ -48,9 +48,10 @@ public class Agendamento : EntidadeBase
     public decimal Valor { get; private set; }
     public SituacaoAgendamento Situacao { get; private set; }
 
-    public void AceitarAgendamento()
+    public void AceitarAgendamento(DateOnly dataAceitacaoAgendamento)
     {
         Situacao = SituacaoAgendamento.Aceito;
+        ModificadoEm = DateTime.UtcNow;
     }
 
     public void AlterarDataAgendamento(DateOnly novaDataAgendamento, DateOnly dataAtualizacaoAgendamento)

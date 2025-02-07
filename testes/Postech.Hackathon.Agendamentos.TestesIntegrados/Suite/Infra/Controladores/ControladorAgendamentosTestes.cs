@@ -393,7 +393,8 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         TimeSpan horarioInicioAgendamento = new(9, 0, 0);
         TimeSpan horarioFimAgendamento = new(10, 0, 0);
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
-        agendamento.AceitarAgendamento();
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)));
+        agendamento.AceitarAgendamento(dataAceitacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)));
         IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
         await repositorio.InserirAsync(agendamento);
         await repositorio.SalvarAlteracoesAsync();
