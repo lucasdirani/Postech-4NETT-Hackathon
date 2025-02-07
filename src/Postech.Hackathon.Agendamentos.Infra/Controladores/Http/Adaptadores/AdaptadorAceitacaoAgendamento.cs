@@ -30,6 +30,11 @@ public static class AdaptadorAceitacaoAgendamento
                 CodigoResposta = (int)HttpStatusCode.Forbidden,
                 Mensagens = [new Notificacao() { Mensagem = "Aceitação não autorizada", Tipo = TipoNotificacao.Erro }]
             },
+            SituacaoAceitacaoAgendamento.AgendamentoNaoEncontrado => new()
+            {
+                CodigoResposta = (int)HttpStatusCode.NotFound,
+                Mensagens = [new Notificacao() { Mensagem = "O agendamento não foi encontrado", Tipo = TipoNotificacao.Erro }]
+            },
             _ => throw new NotImplementedException()
         };
     }
