@@ -40,6 +40,11 @@ public static class AdaptadorEdicaoAgendamento
                 CodigoResposta = (int)HttpStatusCode.Conflict,
                 Mensagens = [new Notificacao() { Mensagem = "O agendamento está em conflito", Tipo = TipoNotificacao.Erro }]
             },
+            SituacaoEdicaoAgendamento.EdicaoNaoProcessavel => new()
+            {
+                CodigoResposta = (int)HttpStatusCode.UnprocessableEntity,
+                Mensagens = [new Notificacao() { Mensagem = "O agendamento não pode ser editado", Tipo = TipoNotificacao.Erro }]
+            },
             _ => throw new NotImplementedException()
         };
     }
