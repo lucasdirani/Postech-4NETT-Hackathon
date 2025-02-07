@@ -78,6 +78,10 @@ public class Agendamento : EntidadeBase
 
     public void EfetuarAgendamento(Guid idPaciente)
     {
+        if (idPaciente.EstaVazio())
+        {
+            throw new ExcecaoDominio("O identificador do paciente é obrigatório", nameof(EfetuarAgendamento), nameof(idPaciente));
+        }
         if (AgendamentoEstaCriado())
         {
             Situacao = SituacaoAgendamento.Efetuado;

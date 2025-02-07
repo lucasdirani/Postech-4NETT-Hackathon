@@ -651,4 +651,27 @@ public class AgendamentoTestes
         excecao.Acao.Should().Be(nameof(Agendamento.EfetuarAgendamento));
         excecao.Propriedade.Should().Be(nameof(Agendamento.Situacao));
     }
+
+    [Fact(DisplayName = "Identificador inválido para o paciente que efetuou o agendamento")]
+    [Trait("Action", "EfetuarAgendamento")]
+    public void EfetuarAgendamento_IdPacienteComValorInvalido_NaoDeveEfetuarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.Empty;
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.EfetuarAgendamento(idPaciente));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento.EfetuarAgendamento));
+        excecao.Propriedade.Should().Be(nameof(idPaciente));
+    }
 }
