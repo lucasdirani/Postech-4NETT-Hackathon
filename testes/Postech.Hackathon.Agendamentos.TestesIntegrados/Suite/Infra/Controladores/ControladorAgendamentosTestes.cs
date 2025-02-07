@@ -771,4 +771,43 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
         conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
     }
+
+    [Fact(DisplayName = "Agendamento enviado para efetuação no endpoint /agendamentos/{idAgendamento} já foi efetuado")]
+    [Trait("Action", "PATCH /agendamentos/{idAgendamento}")]
+    public async Task PatchAgendamentos_AgendamentoEnviadoParaEfetuacaoJaFoiEfetuado_DeveRetornar422UnprocessableEntity()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)));
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoConfirmacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoConfirmacaoAgendamento.Efetuar,
+            IdUsuario = idPaciente,
+            DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+        ComandoRespostaGenerico<ComandoRespostaConfirmacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaConfirmacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
 }
