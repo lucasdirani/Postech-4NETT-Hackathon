@@ -25,6 +25,11 @@ public static class AdaptadorEfetuacaoAgendamento
                 CodigoResposta = (int)HttpStatusCode.BadRequest,
                 Mensagens = [new Notificacao() { Mensagem = "Uma ou mais propriedades estão inválidas", Tipo = TipoNotificacao.Erro }]
             },
+            SituacaoEfetuacaoAgendamento.AgendamentoNaoEncontrado => new()
+            {
+                CodigoResposta = (int)HttpStatusCode.NotFound,
+                Mensagens = [new Notificacao() { Mensagem = "O agendamento não foi encontrado", Tipo = TipoNotificacao.Erro }]
+            },
             _ => throw new NotImplementedException()
         };
     }
