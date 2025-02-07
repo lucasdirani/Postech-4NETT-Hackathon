@@ -108,6 +108,10 @@ public class Agendamento : EntidadeBase
         {
             return;
         }
+        if (novoValorAgendamento <= 0)
+        {
+            throw new ExcecaoDominio("O valor do agendamento deve ser maior do que zero", nameof(AlterarValorAgendamento), nameof(novoValorAgendamento));
+        }
         Valor = novoValorAgendamento;
     }
 }
