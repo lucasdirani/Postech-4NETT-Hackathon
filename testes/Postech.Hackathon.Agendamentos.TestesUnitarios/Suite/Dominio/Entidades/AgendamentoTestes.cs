@@ -421,4 +421,25 @@ public class AgendamentoTestes
         excecao.Acao.Should().Be(nameof(Agendamento.AlterarHorarioAgendamento));
         excecao.Propriedade.Should().Be(nameof(Agendamento.Situacao));
     }
+
+    [Fact(DisplayName = "Alterar o valor de um agendamento")]
+    [Trait("Action", "AlterarValorAgendamento")]
+    public void AlterarValorAgendamento_ValorValido_DeveAlterarValorAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        decimal novoValorAgendamento = 200;
+
+        // Act
+        agendamento.AlterarValorAgendamento(novoValorAgendamento);
+
+        // Assert
+        agendamento.Valor.Should().Be(novoValorAgendamento);
+    }
 }

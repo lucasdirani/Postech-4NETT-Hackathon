@@ -101,4 +101,9 @@ public class Agendamento : EntidadeBase
         HorarioInicio = novoHorarioInicioAgendamento;
         HorarioFim = novoHorarioFimAgendamento;
     }
+
+    public void AlterarValorAgendamento(decimal novoValorAgendamento)
+    {
+        Valor = novoValorAgendamento;
+    }
 }
