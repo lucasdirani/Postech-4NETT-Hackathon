@@ -299,4 +299,35 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
         conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
     }
+
+    [Fact(DisplayName = "Agendamento enviado para edição no endpoint /agendamentos/{idAgendamento} não foi encontrado")]
+    [Trait("Action", "PUT /agendamentos/{idAgendamento}")]
+    public async Task PutAgendamentos_AgendamentoNaoEncontradoParaEdicao_DeveRetornar404NotFound()
+    {
+        // Arrange
+        Guid idAgendamento = Guid.NewGuid();
+        ComandoRequisicaoEdicaoAgendamento comandoRequisicao = new()
+        {
+            IdMedico = Guid.NewGuid(),
+            Data = DateOnly.FromDateTime(DateTime.Today.AddDays(4)),
+            DataAtualizacao = DateOnly.FromDateTime(DateTime.Today),
+            HoraInicio = new TimeSpan(15, 0, 0),
+            HoraFim = new TimeSpan(15, 30, 0),
+            Valor = 50
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Put, $"/agendamentos/{idAgendamento}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        ComandoRespostaGenerico<ComandoRespostaEdicaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaEdicaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
 }
