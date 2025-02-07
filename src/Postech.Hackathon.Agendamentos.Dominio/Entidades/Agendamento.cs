@@ -94,9 +94,9 @@ public class Agendamento : EntidadeBase
         {
             throw new ExcecaoDominio("O horário de início deve ser menor do que o horário de fim", nameof(AlterarHorarioAgendamento), nameof(novoHorarioInicioAgendamento));
         }
-        if (AgendamentoFoiAceito())
+        if (AgendamentoFoiAceito() || AgendamentoFoiEfetuado())
         {
-            throw new ExcecaoDominio("O horário não pode ser alterado com o agendamento aceito", nameof(AlterarHorarioAgendamento), nameof(Situacao));
+            throw new ExcecaoDominio("O horário não pode ser alterado com o agendamento aceito ou efetuado", nameof(AlterarHorarioAgendamento), nameof(Situacao));
         }
         HorarioInicio = novoHorarioInicioAgendamento;
         HorarioFim = novoHorarioFimAgendamento;
