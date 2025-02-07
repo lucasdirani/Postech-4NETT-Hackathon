@@ -25,6 +25,11 @@ public static class AdaptadorCadastroAgendamento
                 CodigoResposta = (int)HttpStatusCode.Conflict,
                 Mensagens = [new Notificacao() { Mensagem = "O agendamento está em conflito", Tipo = TipoNotificacao.Erro }]
             },
+            SituacaoCadastroAgendamento.DadosInvalidos => new()
+            {
+                CodigoResposta = (int)HttpStatusCode.BadRequest,
+                Mensagens = [new Notificacao() { Mensagem = "Uma ou mais propriedades estão inválidas", Tipo = TipoNotificacao.Erro }]
+            },
             _ => throw new NotImplementedException(),
         };
     }
