@@ -170,4 +170,44 @@ public class EdicaoAgendamentoCasoUsoTestes
         repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, novaDataAgendamento), Times.Never());
         repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
     }
+
+    [Fact(DisplayName = "Editar agendamento com novo horário inválido")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_EditarAgendamentoComNovoHorarioInvalido_NaoDeveEditarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = new(2025, 2, 7);
+        DateOnly novaDataAgendamento = new (2025, 2, 8);
+        DateOnly dataAtualizacaoAgendamento = new(2025, 2, 7);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(13, 0, 0);
+        DateOnly dataAtual = new(2025, 2, 5);
+        decimal valorAgendamento = 100;
+        decimal novoValorAgendamento = 150;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        Mock<IRepositorioAgendamento> repositorio = new();  
+        repositorio.Setup(r => r.ObterPorIdAsync(agendamento.Id)).ReturnsAsync(() => agendamento);
+        EdicaoAgendamentoEntrada entrada = new()
+        {
+            IdAgendamento = agendamento.Id,
+            IdMedico = idMedico,
+            DataAtualizacao = dataAtualizacaoAgendamento,
+            DataAgendamento = novaDataAgendamento,
+            HorarioInicioAgendamento = new(14, 0, 0),
+            HorarioFimAgendamento = new(13, 30, 0),
+            ValorAgendamento = novoValorAgendamento
+        };
+        EdicaoAgendamentoCasoUso casoUso = new(repositorio.Object, new ServicoAgendamento());
+
+        // Act
+        EdicaoAgendamentoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.SituacaoEdicaoAgendamento.Should().Be(SituacaoEdicaoAgendamento.DadosInvalidos);
+        saida.Mensagem.Should().NotBeNullOrEmpty();
+        repositorio.Verify(r => r.ObterPorIdAsync(agendamento.Id), Times.Once());
+        repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, novaDataAgendamento), Times.Never());
+        repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
+    }
 }
