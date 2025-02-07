@@ -3,6 +3,7 @@ using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Enumeradores;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Interfaces;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Saidas;
 using Postech.Hackathon.Agendamentos.Dominio.Entidades;
+using Postech.Hackathon.Agendamentos.Dominio.Projecoes;
 using Postech.Hackathon.Agendamentos.Dominio.Repositorios;
 
 namespace Postech.Hackathon.Agendamentos.Aplicacao.CasosUso;
@@ -14,7 +15,7 @@ public class ConsultaAgendamentosPorIdMedicoCasoUso(IRepositorioAgendamento repo
 
     public async Task<ConsultaAgendamentosPorIdMedicoSaida> ExecutarAsync(ConsultaAgendamentosPorIdMedicoEntrada entrada)
     {
-        (IReadOnlyList<Agendamento>, int) agendamentos = await _repositorio.ConsultarAgendamentosMedicoAsync(entrada.IdMedico, entrada.Pagina, entrada.TamanhoPagina);
+        (IReadOnlyList<ProjecaoConsultaAgendamentosPorIdMedico>, int) agendamentos = await _repositorio.ConsultarAgendamentosMedicoAsync(entrada.IdMedico, entrada.Pagina, entrada.TamanhoPagina);
         return new() {
             Agendamentos = agendamentos.Item1,
             QuantidadeItens = agendamentos.Item2,

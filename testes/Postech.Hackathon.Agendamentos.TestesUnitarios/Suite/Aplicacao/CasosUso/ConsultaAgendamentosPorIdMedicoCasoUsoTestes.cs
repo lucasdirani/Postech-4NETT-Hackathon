@@ -4,7 +4,9 @@ using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Entradas;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Enumeradores;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Saidas;
-using Postech.Hackathon.Agendamentos.Dominio.Entidades;
+using Postech.Hackathon.Agendamentos.Dominio.Enumeradores;
+using Postech.Hackathon.Agendamentos.Dominio.Extensoes.Comum;
+using Postech.Hackathon.Agendamentos.Dominio.Projecoes;
 using Postech.Hackathon.Agendamentos.Dominio.Repositorios;
 
 namespace Postech.Hackathon.Agendamentos.TestesUnitarios.Suite.Aplicacao.CasosUso;
@@ -16,18 +18,26 @@ public class ConsultaAgendamentosPorIdMedicoCasoUsoTestes
     public async Task ExecutarAsync_ConsultarAgendamentosMedico_DeveConsultarAgendamentosMedico()
     {
         // Arrange
-        Guid idMedico = Guid.NewGuid();
-        DateOnly dataAgendamento = new(2025, 2, 2);
-        DateOnly dataAtual = new(2025, 2, 1);
-        decimal valorAgendamento = 100;     
+        Guid idMedico = Guid.NewGuid(); 
         int pagina = 1;
         int tamanhoPagina = 5;
-        (IReadOnlyList<Agendamento>, int) agendamentos = new([
-            new Agendamento(idMedico, dataAgendamento, new(11, 0, 0), new(11, 30, 0), dataAtual, valorAgendamento),
-            new Agendamento(idMedico, dataAgendamento, new(11, 30, 0), new(12, 0, 0), dataAtual, valorAgendamento),
-            new Agendamento(idMedico, dataAgendamento, new(14, 0, 0), new(14, 30, 0), dataAtual, valorAgendamento),
-            new Agendamento(idMedico, dataAgendamento, new(14, 30, 0), new(15, 0, 0), dataAtual, valorAgendamento)
-        ], 4); 
+        IReadOnlyList<ProjecaoConsultaAgendamentosPorIdMedico> agendamentosProjecao = [
+            new() { 
+                IdAgendamento = Guid.NewGuid(),
+                Situacao = SituacaoAgendamento.Aceito.ObterDescricao(), 
+                Data = DateOnly.FromDateTime(DateTime.Today), 
+                HoraFim = new(12, 0, 0), 
+                HoraInicio = new(11, 0, 0) 
+            },
+            new() { 
+                IdAgendamento = Guid.NewGuid(),
+                Situacao = SituacaoAgendamento.Criado.ObterDescricao(), 
+                Data = DateOnly.FromDateTime(DateTime.Today.AddDays(1)), 
+                HoraFim = new(15, 0, 0), 
+                HoraInicio = new(14, 0, 0) 
+            }
+        ];
+        (IReadOnlyList<ProjecaoConsultaAgendamentosPorIdMedico>, int) agendamentos = new(agendamentosProjecao, agendamentosProjecao.Count); 
         Mock<IRepositorioAgendamento> repositorio = new();    
         repositorio
             .Setup(r => r.ConsultarAgendamentosMedicoAsync(idMedico, pagina, tamanhoPagina))

@@ -3,6 +3,8 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Postech.Hackathon.Agendamentos.Dominio.Entidades;
 using Postech.Hackathon.Agendamentos.Dominio.Enumeradores;
+using Postech.Hackathon.Agendamentos.Dominio.Extensoes.Comum;
+using Postech.Hackathon.Agendamentos.Dominio.Projecoes;
 using Postech.Hackathon.Agendamentos.Dominio.Repositorios;
 using Postech.Hackathon.Agendamentos.Infra.Dados.Contextos;
 
@@ -31,12 +33,21 @@ public class RepositorioAgendamento(AgendamentoDbContext dbContext) : IRepositor
         return await _dbContext.Agendamentos.Where(a => a.IdMedico == idMedico && a.Data == dataAgendamento).ToListAsync();
     }
 
-    public async Task<(IReadOnlyList<Agendamento>, int)> ConsultarAgendamentosMedicoAsync(Guid idMedico, int pagina, int tamanhoPagina)
+    public async Task<(IReadOnlyList<ProjecaoConsultaAgendamentosPorIdMedico>, int)> ConsultarAgendamentosMedicoAsync(Guid idMedico, int pagina, int tamanhoPagina)
     {
-        IQueryable<Agendamento> consulta = _dbContext.Agendamentos.Where(a => a.IdMedico == idMedico);
-        int totalRegistros = await consulta.CountAsync();
-        List<Agendamento> agendamentos = await consulta
+        IQueryable<ProjecaoConsultaAgendamentosPorIdMedico> consulta = _dbContext.Agendamentos 
+            .Where(a => a.IdMedico == idMedico)
             .OrderBy(a => a.Data)
+            .Select(a => new ProjecaoConsultaAgendamentosPorIdMedico
+            {
+                Situacao = a.Situacao.ObterDescricao(),
+                Data = a.Data,
+                HoraFim = a.HorarioFim,
+                HoraInicio = a.HorarioInicio,
+                IdAgendamento = a.Id
+            });
+        int totalRegistros = await consulta.CountAsync();
+        List<ProjecaoConsultaAgendamentosPorIdMedico> agendamentos = await consulta
             .Skip((pagina - 1) * tamanhoPagina)
             .Take(tamanhoPagina)
             .ToListAsync();
