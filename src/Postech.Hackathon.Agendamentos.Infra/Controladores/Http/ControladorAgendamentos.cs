@@ -7,6 +7,7 @@ using Postech.Hackathon.Agendamentos.Aplicacao.Notificacoes.Interfaces;
 using Postech.Hackathon.Agendamentos.Aplicacao.Notificacoes.Modelos;
 using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Adaptadores;
 using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos;
+using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos.Constantes;
 using Postech.Hackathon.Agendamentos.Infra.Http.Interfaces;
 
 namespace Postech.Hackathon.Agendamentos.Infra.Controladores.Http;
@@ -42,10 +43,20 @@ public class ControladorAgendamentos
         });
         http.On<ComandoRequisicaoConfirmacaoAgendamento, ComandoRespostaConfirmacaoAgendamento>(HttpMethod.Patch.ToString(), "/agendamentos/{idAgendamento}", async (corpo, valoresRota, serviceProvider) =>
         {
-            IAceitacaoAgendamentoCasoUso casoUso = serviceProvider.GetRequiredService<IAceitacaoAgendamentoCasoUso>();
             _ = Guid.TryParse(valoresRota["idAgendamento"]?.ToString(), out Guid idAgendamento);
-            AceitacaoAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaAceitacaoAgendamentoEntrada(idAgendamento));
-            return AdaptadorAceitacaoAgendamento.Adaptar(saida);
+            if (corpo.Acao.Equals(AcaoConfirmacaoAgendamento.Aceitar))
+            {
+                IAceitacaoAgendamentoCasoUso casoUso = serviceProvider.GetRequiredService<IAceitacaoAgendamentoCasoUso>();
+                AceitacaoAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaAceitacaoAgendamentoEntrada(idAgendamento));
+                return AdaptadorAceitacaoAgendamento.Adaptar(saida);
+            }
+            if (corpo.Acao.Equals(AcaoConfirmacaoAgendamento.Efetuar))
+            {
+                IEfetuacaoAgendamentoCasoUso casoUso = serviceProvider.GetRequiredService<IEfetuacaoAgendamentoCasoUso>();
+                EfetuacaoAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaEfetuacaoAgendamentoEntrada(idAgendamento));
+                return AdaptadorEfetuacaoAgendamento.Adaptar(saida);
+            }
+            return new();
         });
     }
 }

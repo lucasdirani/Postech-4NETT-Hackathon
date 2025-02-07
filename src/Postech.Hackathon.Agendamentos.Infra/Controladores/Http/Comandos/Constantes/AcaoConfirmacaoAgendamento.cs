@@ -5,5 +5,6 @@ namespace Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos.Const
 [ExcludeFromCodeCoverage]
 public static class AcaoConfirmacaoAgendamento
 {
-    public static readonly string Aceitar = "ACEITAR";
+    public const string Aceitar = "ACEITAR";
+    public const string Efetuar = "EFETUAR";
 }

@@ -461,4 +461,42 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeTrue();
         conteudoMensagemResposta.Mensagens.Should().BeNullOrEmpty();
     }
+
+    [Fact(DisplayName = "Requisição para efetuar um agendamento no endpoint /agendamentos/{idAgendamento}")]
+    [Trait("Action", "PATCH /agendamentos/{idAgendamento}")]
+    public async Task PatchAgendamentos_RequisicaoValidaEfetuarAgendamento_DeveRetornar204NoContent()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoConfirmacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoConfirmacaoAgendamento.Efetuar,
+            IdUsuario = idPaciente,
+            DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        ComandoRespostaGenerico<ComandoRespostaConfirmacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaConfirmacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().NotBeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeTrue();
+        conteudoMensagemResposta.Mensagens.Should().BeNullOrEmpty();
+    }
 }

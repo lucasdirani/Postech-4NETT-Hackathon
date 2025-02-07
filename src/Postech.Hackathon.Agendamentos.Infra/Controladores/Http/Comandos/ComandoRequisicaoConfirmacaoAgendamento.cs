@@ -25,4 +25,14 @@ public record ComandoRequisicaoConfirmacaoAgendamento
             IdMedico = IdUsuario
         };
     }
+
+    internal EfetuacaoAgendamentoEntrada ConverterParaEfetuacaoAgendamentoEntrada(Guid idAgendamento)
+    {
+        return new()
+        {
+            DataEfetuacao = DataConfirmacao,
+            IdAgendamento = idAgendamento,
+            IdPaciente = IdUsuario
+        };
+    }
 }
