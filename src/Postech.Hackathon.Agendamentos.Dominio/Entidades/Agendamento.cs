@@ -90,6 +90,10 @@ public class Agendamento : EntidadeBase
         {
             return;
         }
+        if (novoHorarioInicioAgendamento > novoHorarioFimAgendamento)
+        {
+            throw new ExcecaoDominio("O horário de início deve ser menor do que o horário de fim", nameof(AlterarHorarioAgendamento), nameof(novoHorarioInicioAgendamento));
+        }
         HorarioInicio = novoHorarioInicioAgendamento;
         HorarioFim = novoHorarioFimAgendamento;
     }
