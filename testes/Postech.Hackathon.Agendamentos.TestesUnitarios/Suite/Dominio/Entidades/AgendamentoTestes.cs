@@ -203,4 +203,28 @@ public class AgendamentoTestes
         // Assert
         agendamento.Data.Should().Be(dataAgendamento);
     }
+
+    [Fact(DisplayName = "Nova data do agendamento anterior a data de atualização")]
+    [Trait("Action", "AlterarDataAgendamento")]
+    public void AlterarDataAgendamento_NovaDataAgendamentoAnteriorDataAtualizacao_DeveLancarExcecaoDominio()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        DateOnly novaDataAgendamento = new(2025, 2, 3);
+        DateOnly dataAtualizacaoAgendamento = new(2025, 2, 4);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.AlterarDataAgendamento(novaDataAgendamento, dataAtualizacaoAgendamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento.AlterarDataAgendamento));
+        excecao.Propriedade.Should().Be(nameof(novaDataAgendamento));
+    }
 }
