@@ -30,6 +30,11 @@ public static class AdaptadorEfetuacaoAgendamento
                 CodigoResposta = (int)HttpStatusCode.NotFound,
                 Mensagens = [new Notificacao() { Mensagem = "O agendamento não foi encontrado", Tipo = TipoNotificacao.Erro }]
             },
+            SituacaoEfetuacaoAgendamento.Conflito => new()
+            {
+                CodigoResposta = (int)HttpStatusCode.Conflict,
+                Mensagens = [new Notificacao() { Mensagem = "O agendamento está em conflito", Tipo = TipoNotificacao.Erro }]
+            },
             _ => throw new NotImplementedException()
         };
     }
