@@ -35,6 +35,11 @@ public static class AdaptadorAceitacaoAgendamento
                 CodigoResposta = (int)HttpStatusCode.NotFound,
                 Mensagens = [new Notificacao() { Mensagem = "O agendamento não foi encontrado", Tipo = TipoNotificacao.Erro }]
             },
+            SituacaoAceitacaoAgendamento.AceitacaoNaoProcessavel => new()
+            {
+                CodigoResposta = (int)HttpStatusCode.UnprocessableEntity,
+                Mensagens = [new Notificacao() { Mensagem = "O agendamento não pode ser editado", Tipo = TipoNotificacao.Erro }]
+            },
             _ => throw new NotImplementedException()
         };
     }
