@@ -46,4 +46,9 @@ public class Agendamento : EntidadeBase
     public TimeSpan HorarioFim { get; private set; }
     public decimal Valor { get; private set; }
     public SituacaoAgendamento Situacao { get; private set; }
+
+    public void AlterarDataAgendamento(DateOnly novaDataAgendamento, DateOnly dataAtualizacaoAgendamento)
+    {
+        Data = novaDataAgendamento;
+    }
 }
