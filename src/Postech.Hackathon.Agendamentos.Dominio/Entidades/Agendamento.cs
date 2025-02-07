@@ -58,7 +58,7 @@ public class Agendamento : EntidadeBase
         {
             return;
         }
-        if (novaDataAgendamento < dataAtualizacaoAgendamento)
+        if (novaDataAgendamento <= dataAtualizacaoAgendamento)
         {
             throw new ExcecaoDominio("A data de agendamento deve ser maior do que a data de atualização", nameof(AlterarDataAgendamento), nameof(novaDataAgendamento));
         }
