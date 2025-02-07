@@ -78,9 +78,19 @@ public class Agendamento : EntidadeBase
 
     public void EfetuarAgendamento(Guid idPaciente)
     {
-        Situacao = SituacaoAgendamento.Efetuado;
-        IdPaciente = idPaciente;
-        ModificadoEm = DateTime.UtcNow;
+        if (AgendamentoEstaCriado())
+        {
+            Situacao = SituacaoAgendamento.Efetuado;
+            IdPaciente = idPaciente;
+            ModificadoEm = DateTime.UtcNow;
+            return;
+        }
+        throw new ExcecaoDominio("O agendamento não pode ser efetuado", nameof(EfetuarAgendamento), nameof(Situacao));
+    }
+
+    private bool AgendamentoEstaCriado()
+    {
+        return Situacao is SituacaoAgendamento.Criado;
     }
 
     private bool AgendamentoFoiAceito()
