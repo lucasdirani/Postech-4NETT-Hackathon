@@ -83,4 +83,10 @@ public class Agendamento : EntidadeBase
     {
         return Situacao is SituacaoAgendamento.Aceito;
     }
+
+    public void AlterarHorarioAgendamento(TimeSpan novoHorarioInicioAgendamento, TimeSpan novoHorarioFimAgendamento)
+    {
+        HorarioInicio = novoHorarioInicioAgendamento;
+        HorarioFim = novoHorarioFimAgendamento;
+    }
 }
