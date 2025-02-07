@@ -300,4 +300,27 @@ public class AgendamentoTestes
         agendamento.HorarioInicio.Should().Be(novoHorarioInicioAgendamento);
         agendamento.HorarioFim.Should().Be(novoHorarioFimAgendamento);
     }
+
+    [Fact(DisplayName = "Alterar o horário do agendamento para o mesmo horário cadastrado")]
+    [Trait("Action", "AlterarHorarioAgendamento")]
+    public void AlterarHorarioAgendamento_HorarioOriginal_DevePermanecerHorarioOriginalAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        TimeSpan novoHorarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan novoHorarioFimAgendamento = new(12, 30, 0);
+
+        // Act
+        agendamento.AlterarHorarioAgendamento(novoHorarioInicioAgendamento, novoHorarioFimAgendamento);
+
+        // Assert
+        agendamento.HorarioInicio.Should().Be(horarioInicioAgendamento);
+        agendamento.HorarioFim.Should().Be(horarioFimAgendamento);
+    }
 }

@@ -86,6 +86,10 @@ public class Agendamento : EntidadeBase
 
     public void AlterarHorarioAgendamento(TimeSpan novoHorarioInicioAgendamento, TimeSpan novoHorarioFimAgendamento)
     {
+        if (novoHorarioInicioAgendamento == HorarioInicio && novoHorarioFimAgendamento == HorarioFim)
+        {
+            return;
+        }
         HorarioInicio = novoHorarioInicioAgendamento;
         HorarioFim = novoHorarioFimAgendamento;
     }
