@@ -62,11 +62,21 @@ public class Agendamento : EntidadeBase
         {
             throw new ExcecaoDominio("A data de agendamento deve ser maior do que a data de atualização", nameof(AlterarDataAgendamento), nameof(novaDataAgendamento));
         }
-        if (AgendamentoFoiAceito())
+        if (AgendamentoFoiAceito() || AgendamentoFoiEfetuado())
         {
-            throw new ExcecaoDominio("A data não pode ser alterada com o agendamento aceito", nameof(AlterarDataAgendamento), nameof(Situacao));
+            throw new ExcecaoDominio("A data não pode ser alterada com o agendamento aceito ou efetuado", nameof(AlterarDataAgendamento), nameof(Situacao));
         }
         Data = novaDataAgendamento;
+    }
+
+    private bool AgendamentoFoiEfetuado()
+    {
+        return Situacao is SituacaoAgendamento.Efetuado;
+    }
+
+    public void EfetuarAgendamento()
+    {
+        Situacao = SituacaoAgendamento.Efetuado;
     }
 
     private bool AgendamentoFoiAceito()

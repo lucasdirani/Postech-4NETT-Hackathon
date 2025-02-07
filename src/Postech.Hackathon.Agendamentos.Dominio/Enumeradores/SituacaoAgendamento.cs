@@ -8,4 +8,6 @@ public enum SituacaoAgendamento
     Criado,
     [Description("ACEITO")]
     Aceito,
+    [Description("EFETUADO")]
+    Efetuado,
 }
