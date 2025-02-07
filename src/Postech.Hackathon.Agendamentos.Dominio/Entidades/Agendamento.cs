@@ -41,6 +41,7 @@ public class Agendamento : EntidadeBase
     private Agendamento() {}
 
     public Guid IdMedico { get; private set; }       
+    public Guid? IdPaciente { get; private set; }
     public DateOnly Data { get; private set; }
     public TimeSpan HorarioInicio { get; private set; }
     public TimeSpan HorarioFim { get; private set; }
@@ -75,9 +76,11 @@ public class Agendamento : EntidadeBase
         return Situacao is SituacaoAgendamento.Efetuado;
     }
 
-    public void EfetuarAgendamento()
+    public void EfetuarAgendamento(Guid idPaciente)
     {
         Situacao = SituacaoAgendamento.Efetuado;
+        IdPaciente = idPaciente;
+        ModificadoEm = DateTime.UtcNow;
     }
 
     private bool AgendamentoFoiAceito()

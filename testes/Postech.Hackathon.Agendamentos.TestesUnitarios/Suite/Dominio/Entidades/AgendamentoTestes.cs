@@ -285,13 +285,14 @@ public class AgendamentoTestes
     {
         // Arrange
         Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
         DateOnly dataAtual = new(2025, 2, 1);
         DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(12, 0, 0);
         TimeSpan horarioFimAgendamento = new(12, 30, 0);
         decimal valorAgendamento = 100;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.EfetuarAgendamento();
+        agendamento.EfetuarAgendamento(idPaciente);
         DateOnly novaDataAgendamento = new(2025, 2, 3);
         DateOnly dataAtualizacaoAgendamento = new(2025, 2, 2);
 
@@ -430,13 +431,14 @@ public class AgendamentoTestes
     {
         // Arrange
         Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
         DateOnly dataAtual = new(2025, 2, 1);
         DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(12, 0, 0);
         TimeSpan horarioFimAgendamento = new(12, 30, 0);
         decimal valorAgendamento = 100;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.EfetuarAgendamento();
+        agendamento.EfetuarAgendamento(idPaciente);
         TimeSpan novoHorarioInicioAgendamento = new(14, 0, 0);
         TimeSpan novoHorarioFimAgendamento = new(14, 30, 0);
 
@@ -545,13 +547,14 @@ public class AgendamentoTestes
     {
         // Arrange
         Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
         DateOnly dataAtual = new(2025, 2, 1);
         DateOnly dataAgendamento = new(2025, 2, 2);
         TimeSpan horarioInicioAgendamento = new(12, 0, 0);
         TimeSpan horarioFimAgendamento = new(12, 30, 0);
         decimal valorAgendamento = 100;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.EfetuarAgendamento();
+        agendamento.EfetuarAgendamento(idPaciente);
         decimal novoValorAgendamento = 150;
 
         // Act
@@ -601,5 +604,27 @@ public class AgendamentoTestes
 
         // Assert
         pertenceMedico.Should().BeFalse();
+    }
+
+    [Fact(DisplayName = "Efetuar agendamento com situação válida")]
+    [Trait("Action", "EfetuarAgendamento")]
+    public void EfetuarAgendamento_AgendamentoComSituacaoValida_DeveEfetuarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+
+        // Act
+        agendamento.EfetuarAgendamento(idPaciente);
+
+        // Assert
+        agendamento.IdPaciente.Should().Be(idPaciente);
+        agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
     }
 }

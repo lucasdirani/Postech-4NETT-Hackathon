@@ -37,6 +37,10 @@ internal class ConfigAgendamento : IEntityTypeConfiguration<Agendamento>
             .HasColumnType("uuid")
             .IsRequired();
         builder
+            .Property(a => a.IdPaciente)
+            .HasColumnName("Id_Paciente")
+            .HasColumnType("uuid");
+        builder
             .Property(a => a.Data)
             .HasColumnName("Data")
             .HasColumnType("date")
