@@ -538,4 +538,44 @@ public class AgendamentoTestes
         excecao.Acao.Should().Be(nameof(Agendamento.AlterarValorAgendamento));
         excecao.Propriedade.Should().Be(nameof(Agendamento.Situacao));
     }
+
+    [Fact(DisplayName = "Agendamento que pertence ao médico que realizou o seu cadastro")]
+    [Trait("Action", "PertenceMedico")]
+    public void PertenceMedico_AgendamentoPertenceMedicoRealizouCadastro_DeveRetornarVerdadeiro()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+
+        // Act
+        bool pertenceMedico = agendamento.PertenceMedico(idMedico);
+
+        // Assert
+        pertenceMedico.Should().BeTrue();
+    }
+
+    [Fact(DisplayName = "Agendamento que não pertence ao médico que realizou o seu cadastro")]
+    [Trait("Action", "PertenceMedico")]
+    public void PertenceMedico_AgendamentoNaoPertenceMedicoRealizouCadastro_DeveRetornarFalso()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+
+        // Act
+        bool pertenceMedico = agendamento.PertenceMedico(idMedico: Guid.NewGuid());
+
+        // Assert
+        pertenceMedico.Should().BeFalse();
+    }
 }
