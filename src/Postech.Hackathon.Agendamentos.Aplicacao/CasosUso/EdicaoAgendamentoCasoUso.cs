@@ -26,7 +26,8 @@ public class EdicaoAgendamentoCasoUso(IRepositorioAgendamento repositorio, IServ
             agendamento.AlterarHorarioAgendamento(entrada.HorarioInicioAgendamento, entrada.HorarioFimAgendamento);
             agendamento.AlterarValorAgendamento(entrada.ValorAgendamento);
             IReadOnlyList<Agendamento> agendamentos = await _repositorio.ConsultarAgendamentosMedicoAsync(entrada.IdMedico, entrada.DataAgendamento);
-            _ = _servicoAgendamento.ValidarConflitoHorarioAgendamento(agendamentos, entrada.HorarioInicioAgendamento, entrada.HorarioFimAgendamento);
+            bool possuiConflito = _servicoAgendamento.ValidarConflitoHorarioAgendamento(agendamentos, entrada.HorarioInicioAgendamento, entrada.HorarioFimAgendamento);
+            if (possuiConflito) return new() { SituacaoEdicaoAgendamento = SituacaoEdicaoAgendamento.Conflito };
             _repositorio.Atualizar(agendamento);
             await _repositorio.SalvarAlteracoesAsync();
             return new() { SituacaoEdicaoAgendamento = SituacaoEdicaoAgendamento.Sucesso };

@@ -6,4 +6,5 @@ public enum SituacaoEdicaoAgendamento
     AgendamentoNaoEncontrado,
     EdicaoNaoPermitida,
     DadosInvalidos,
+    Conflito,
 }
