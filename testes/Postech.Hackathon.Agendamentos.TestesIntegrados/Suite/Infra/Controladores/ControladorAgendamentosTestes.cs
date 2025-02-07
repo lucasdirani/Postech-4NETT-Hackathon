@@ -3,6 +3,8 @@ using System.Text;
 using System.Text.Json;
 using System.Xml.Serialization;
 using FluentAssertions;
+using Postech.Hackathon.Agendamentos.Dominio.Entidades;
+using Postech.Hackathon.Agendamentos.Dominio.Repositorios;
 using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos;
 using Postech.Hackathon.Agendamentos.Infra.Http.Deserializadores.Extensoes;
 using Postech.Hackathon.Agendamentos.TestesIntegrados.Configuracoes.Base;
@@ -84,5 +86,49 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnsupportedMediaType);
+    }
+ 
+    [Fact(DisplayName = "Agendamento enviado para cadastro no endpoint /agendamentos está em conflito")]
+    [Trait("Action", "/agendamentos")]
+    public async Task Agendamentos_CadastroAgendamentoEmConflito_DeveRetornar409Conflict()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        decimal valorAgendamento = 100;
+        List<Agendamento> agendamentos =
+        [
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(9, 0, 0), horarioFimAgendamento: new(9, 30, 0), dataAtual, valorAgendamento),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(9, 30, 0), horarioFimAgendamento: new(10, 0, 0), dataAtual, valorAgendamento),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(10, 0, 0), horarioFimAgendamento: new(10, 30, 0), dataAtual, valorAgendamento),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(10, 30, 0), horarioFimAgendamento: new(11, 0, 0), dataAtual, valorAgendamento),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(12, 0, 0), horarioFimAgendamento: new(12, 30, 0), dataAtual, valorAgendamento),
+        ];
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamentos);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoCadastroAgendamento comandoRequisicao = new()
+        {
+            IdMedico = idMedico,
+            Data = new(2025, 2, 2),
+            HoraInicio = new TimeSpan(12, 0, 0),
+            HoraFim = new TimeSpan(12, 30, 0),
+            Valor = valorAgendamento,
+            DataAtual = dataAtual
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"/agendamentos")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        ComandoRespostaGenerico<ComandoRespostaCadastroAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaCadastroAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
     }
 }

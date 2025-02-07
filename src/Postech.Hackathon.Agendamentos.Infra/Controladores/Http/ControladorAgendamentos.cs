@@ -5,6 +5,7 @@ using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Saidas;
 using Postech.Hackathon.Agendamentos.Aplicacao.Notificacoes.Enumeradores;
 using Postech.Hackathon.Agendamentos.Aplicacao.Notificacoes.Interfaces;
 using Postech.Hackathon.Agendamentos.Aplicacao.Notificacoes.Modelos;
+using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Adaptadores;
 using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos;
 using Postech.Hackathon.Agendamentos.Infra.Http.Interfaces;
 
@@ -24,10 +25,7 @@ public class ControladorAgendamentos
             }
             ICadastroAgendamentoCasoUso casoUso = serviceProvider.GetRequiredService<ICadastroAgendamentoCasoUso>();
             CadastroAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaCadastroAgendamentoEntrada());
-            return new() { 
-                Dados = new ComandoRespostaCadastroAgendamento() { IdAgendamento = saida.IdAgendamento },
-                CodigoResposta = (int) HttpStatusCode.Created 
-            };
+            return AdaptadorCadastroAgendamento.Adaptar(saida);
         });
     }
 }

@@ -11,6 +11,7 @@ public interface IRepositorio<T, in TId>
     Task<List<T>> EncontrarAsync(Expression<Func<T, bool>> expressao);
     Task<T?> ObterPorIdAsync(TId id);
     Task InserirAsync(T entidade);
+    Task InserirAsync(List<T> entidades);
     Task SalvarAlteracoesAsync();
     void Atualizar(T entidade);
 }

@@ -37,6 +37,11 @@ public class RepositorioAgendamento(AgendamentoDbContext dbContext) : IRepositor
         await _dbContext.Agendamentos.AddAsync(entidade);
     }
 
+    public async Task InserirAsync(List<Agendamento> entidades)
+    {
+        await _dbContext.Agendamentos.AddRangeAsync(entidades);
+    }
+
     public async Task<Agendamento?> ObterPorIdAsync(Guid id)
     {
         return await _dbContext.Agendamentos.FindAsync(id);
