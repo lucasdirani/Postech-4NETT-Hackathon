@@ -19,7 +19,8 @@ public class EfetuacaoAgendamentoCasoUso(IRepositorioAgendamento repositorio, IS
         Agendamento? agendamento = await _repositorio.ObterPorIdAsync(entrada.IdAgendamento);
         if (agendamento is null) return new() { SituacaoEfetuacaoAgendamento = SituacaoEfetuacaoAgendamento.AgendamentoNaoEncontrado, Mensagem = "Agendamento inexistente" };
         IReadOnlyList<Agendamento> agendamentos = await _repositorio.ConsultarAgendamentosEfetuadosOuAceitosDoPacienteAsync(entrada.IdPaciente, agendamento.Data);
-        _ = _servicoAgendamento.ValidarConflitoHorarioAgendamento(agendamentos, agendamento.HorarioInicio, agendamento.HorarioFim);
+        bool possuiConflito = _servicoAgendamento.ValidarConflitoHorarioAgendamento(agendamentos, agendamento.HorarioInicio, agendamento.HorarioFim);
+        if (possuiConflito) return new() { SituacaoEfetuacaoAgendamento = SituacaoEfetuacaoAgendamento.Conflito };
         agendamento.EfetuarAgendamento(entrada.IdPaciente, entrada.DataEfetuacao);
         _repositorio.Atualizar(agendamento);
         await _repositorio.SalvarAlteracoesAsync();
