@@ -442,4 +442,25 @@ public class AgendamentoTestes
         // Assert
         agendamento.Valor.Should().Be(novoValorAgendamento);
     }
+
+    [Fact(DisplayName = "Alterar o valor do agendamento para o mesmo valor cadastrado")]
+    [Trait("Action", "AlterarValorAgendamento")]
+    public void AlterarValorAgendamento_ValorOriginal_DevePermanecerValorOriginalAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        decimal novoValorAgendamento = 100;
+
+        // Act
+        agendamento.AlterarValorAgendamento(novoValorAgendamento);
+
+        // Assert
+        agendamento.Valor.Should().Be(valorAgendamento);
+    }
 }

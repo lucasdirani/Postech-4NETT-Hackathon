@@ -104,6 +104,10 @@ public class Agendamento : EntidadeBase
 
     public void AlterarValorAgendamento(decimal novoValorAgendamento)
     {
+        if (novoValorAgendamento == Valor)
+        {
+            return;
+        }
         Valor = novoValorAgendamento;
     }
 }
