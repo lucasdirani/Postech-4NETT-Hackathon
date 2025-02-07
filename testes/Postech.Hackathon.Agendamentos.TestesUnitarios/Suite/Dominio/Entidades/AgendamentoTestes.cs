@@ -26,6 +26,7 @@ public class AgendamentoTestes
         agendamento.Should().NotBeNull();
         agendamento.Id.Should().NotBeEmpty();
         agendamento.CriadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
+        agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
         agendamento.IdMedico.Should().Be(idMedico);
         agendamento.Data.Should().Be(dataAgendamento);
         agendamento.HorarioInicio.Should().Be(horarioInicioAgendamento);
@@ -180,6 +181,7 @@ public class AgendamentoTestes
 
         // Assert
         agendamento.Data.Should().Be(novaDataAgendamento);
+        agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
     }
 
     [Fact(DisplayName = "Alterar a data do agendamento para a mesma data cadastrada")]
@@ -299,6 +301,7 @@ public class AgendamentoTestes
         // Assert
         agendamento.HorarioInicio.Should().Be(novoHorarioInicioAgendamento);
         agendamento.HorarioFim.Should().Be(novoHorarioFimAgendamento);
+        agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
     }
 
     [Fact(DisplayName = "Alterar o horário do agendamento para o mesmo horário cadastrado")]
@@ -441,6 +444,7 @@ public class AgendamentoTestes
 
         // Assert
         agendamento.Valor.Should().Be(novoValorAgendamento);
+        agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
     }
 
     [Fact(DisplayName = "Alterar o valor do agendamento para o mesmo valor cadastrado")]

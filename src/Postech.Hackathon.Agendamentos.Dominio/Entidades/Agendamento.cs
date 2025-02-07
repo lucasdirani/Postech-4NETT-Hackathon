@@ -67,6 +67,7 @@ public class Agendamento : EntidadeBase
             throw new ExcecaoDominio("A data não pode ser alterada com o agendamento aceito ou efetuado", nameof(AlterarDataAgendamento), nameof(Situacao));
         }
         Data = novaDataAgendamento;
+        ModificadoEm = DateTime.UtcNow;
     }
 
     private bool AgendamentoFoiEfetuado()
@@ -100,6 +101,7 @@ public class Agendamento : EntidadeBase
         }
         HorarioInicio = novoHorarioInicioAgendamento;
         HorarioFim = novoHorarioFimAgendamento;
+        ModificadoEm = DateTime.UtcNow;
     }
 
     public void AlterarValorAgendamento(decimal novoValorAgendamento)
@@ -117,5 +119,6 @@ public class Agendamento : EntidadeBase
             throw new ExcecaoDominio("O valor não pode ser alterado com o agendamento aceito ou efetuado", nameof(AlterarValorAgendamento), nameof(Situacao));
         }
         Valor = novoValorAgendamento;
+        ModificadoEm = DateTime.UtcNow;
     }
 }
