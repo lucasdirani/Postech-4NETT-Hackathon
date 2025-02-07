@@ -12,6 +12,10 @@ public class ServicoAgendamento : IServicoAgendamento
         TimeSpan horarioInicioNovoAgendamento, 
         TimeSpan horarioFimNovoAgendamento)
     {
+        if (agendamentos is null)
+        {
+            return false;
+        }
         if (!agendamentos.TodosPossuemMesmaData())
         {
             throw new ExcecaoDominio("Os agendamentos devem estar na mesma data", nameof(ValidarConflitoHorarioAgendamento), nameof(Agendamento.Data));

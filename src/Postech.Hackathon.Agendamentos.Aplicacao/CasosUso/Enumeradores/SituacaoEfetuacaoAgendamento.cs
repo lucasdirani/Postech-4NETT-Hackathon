@@ -5,4 +5,5 @@ public enum SituacaoEfetuacaoAgendamento
     Sucesso,
     AgendamentoNaoEncontrado,
     Conflito,
+    DadosInvalidos,
 }
