@@ -6,4 +6,6 @@ public enum SituacaoAgendamento
 {
     [Description("CRIADO")]
     Criado,
+    [Description("ACEITO")]
+    Aceito,
 }

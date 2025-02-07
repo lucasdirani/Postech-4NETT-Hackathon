@@ -47,6 +47,11 @@ public class Agendamento : EntidadeBase
     public decimal Valor { get; private set; }
     public SituacaoAgendamento Situacao { get; private set; }
 
+    public void AceitarAgendamento()
+    {
+        Situacao = SituacaoAgendamento.Aceito;
+    }
+
     public void AlterarDataAgendamento(DateOnly novaDataAgendamento, DateOnly dataAtualizacaoAgendamento)
     {
         if (novaDataAgendamento == Data)
@@ -57,6 +62,15 @@ public class Agendamento : EntidadeBase
         {
             throw new ExcecaoDominio("A data de agendamento deve ser maior do que a data de atualização", nameof(AlterarDataAgendamento), nameof(novaDataAgendamento));
         }
+        if (AgendamentoFoiAceito())
+        {
+            throw new ExcecaoDominio("A data não pode ser alterada com o agendamento aceito", nameof(AlterarDataAgendamento), nameof(Situacao));
+        }
         Data = novaDataAgendamento;
+    }
+
+    private bool AgendamentoFoiAceito()
+    {
+        return Situacao is SituacaoAgendamento.Aceito;
     }
 }
