@@ -49,6 +49,10 @@ public class Agendamento : EntidadeBase
 
     public void AlterarDataAgendamento(DateOnly novaDataAgendamento, DateOnly dataAtualizacaoAgendamento)
     {
+        if (novaDataAgendamento == Data)
+        {
+            return;
+        }
         Data = novaDataAgendamento;
     }
 }

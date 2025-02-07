@@ -181,4 +181,26 @@ public class AgendamentoTestes
         // Assert
         agendamento.Data.Should().Be(novaDataAgendamento);
     }
+
+    [Fact(DisplayName = "Alterar a data do agendamento para a mesma data cadastrada")]
+    [Trait("Action", "AlterarDataAgendamento")]
+    public void AlterarDataAgendamento_DataOriginal_DevePermanecerDataOriginalAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        DateOnly novaDataAgendamento = new(2025, 2, 2);
+        DateOnly dataAtualizacaoAgendamento = new(2025, 2, 2);
+
+        // Act
+        agendamento.AlterarDataAgendamento(novaDataAgendamento, dataAtualizacaoAgendamento);
+
+        // Assert
+        agendamento.Data.Should().Be(dataAgendamento);
+    }
 }
