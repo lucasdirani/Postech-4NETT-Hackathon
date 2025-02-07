@@ -26,6 +26,12 @@ internal class ConfigAgendamento : IEntityTypeConfiguration<Agendamento>
             .HasDefaultValueSql("CURRENT_TIMESTAMP")
             .IsRequired();
         builder
+            .Property(a => a.ModificadoEm)
+            .HasColumnName("Modificado_Em")
+            .HasColumnType("timestamp with time zone")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .IsRequired();
+        builder
             .Property(a => a.IdMedico)
             .HasColumnName("Id_Medico")
             .HasColumnType("uuid")
