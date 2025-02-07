@@ -518,4 +518,42 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
         conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
     }
+
+    [Fact(DisplayName = "Requisição enviada com dados inválidos para aceitar um agendamento no endpoint /agendamentos/{idAgendamento}")]
+    [Trait("Action", "PATCH /agendamentos/{idAgendamento}")]
+    public async Task PatchAgendamentos_RequisicaoDadosInvalidosAceitarAgendamento_DeveRetornar400BadRequest()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(-3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(-4));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(-4)));
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoConfirmacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoConfirmacaoAgendamento.Aceitar,
+            IdUsuario = idMedico,
+            DataConfirmacao = DateOnly.FromDateTime(DateTime.Today)
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        ComandoRespostaGenerico<ComandoRespostaConfirmacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaConfirmacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
 }
