@@ -51,4 +51,33 @@ public class EfetuacaoAgendamentoCasoUsoTestes
         repositorio.Verify(r => r.ConsultarAgendamentosEfetuadosOuAceitosDoPacienteAsync(idPaciente, dataAgendamento), Times.Once());
         repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Once());
     }
+
+    [Fact(DisplayName = "Efetuar agendamento não existente no sistema")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_EfetuarAgendamentoNaoExistente_NaoDeveEfetuarAgendamento()
+    {
+        // Arrange
+        Guid idAgendamentoNaoExistente = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAgendamento = new(2025, 2, 7);
+        Mock<IRepositorioAgendamento> repositorio = new();  
+        repositorio.Setup(r => r.ObterPorIdAsync(idAgendamentoNaoExistente)).ReturnsAsync(() => null);
+        EfetuacaoAgendamentoEntrada entrada = new()
+        {
+            IdAgendamento = idAgendamentoNaoExistente,
+            IdPaciente = idPaciente,
+            DataEfetuacao = new DateOnly(2025, 2, 6)
+        };
+        EfetuacaoAgendamentoCasoUso casoUso = new(repositorio.Object, new ServicoAgendamento());
+
+        // Act
+        EfetuacaoAgendamentoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.SituacaoEfetuacaoAgendamento.Should().Be(SituacaoEfetuacaoAgendamento.AgendamentoNaoEncontrado);
+        saida.Mensagem.Should().NotBeNullOrEmpty();
+        repositorio.Verify(r => r.ObterPorIdAsync(idAgendamentoNaoExistente), Times.Once());
+        repositorio.Verify(r => r.ConsultarAgendamentosEfetuadosOuAceitosDoPacienteAsync(idPaciente, dataAgendamento), Times.Never());
+        repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
+    }
 }

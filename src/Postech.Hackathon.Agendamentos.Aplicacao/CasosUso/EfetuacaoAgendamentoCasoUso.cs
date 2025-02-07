@@ -17,6 +17,7 @@ public class EfetuacaoAgendamentoCasoUso(IRepositorioAgendamento repositorio, IS
     public async Task<EfetuacaoAgendamentoSaida> ExecutarAsync(EfetuacaoAgendamentoEntrada entrada)
     {
         Agendamento? agendamento = await _repositorio.ObterPorIdAsync(entrada.IdAgendamento);
+        if (agendamento is null) return new() { SituacaoEfetuacaoAgendamento = SituacaoEfetuacaoAgendamento.AgendamentoNaoEncontrado, Mensagem = "Agendamento inexistente" };
         IReadOnlyList<Agendamento> agendamentos = await _repositorio.ConsultarAgendamentosEfetuadosOuAceitosDoPacienteAsync(entrada.IdPaciente, agendamento.Data);
         _ = _servicoAgendamento.ValidarConflitoHorarioAgendamento(agendamentos, agendamento.HorarioInicio, agendamento.HorarioFim);
         agendamento.EfetuarAgendamento(entrada.IdPaciente, entrada.DataEfetuacao);
