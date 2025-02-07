@@ -50,8 +50,13 @@ public class Agendamento : EntidadeBase
 
     public void AceitarAgendamento(DateOnly dataAceitacaoAgendamento)
     {
-        Situacao = SituacaoAgendamento.Aceito;
-        ModificadoEm = DateTime.UtcNow;
+        if (AgendamentoFoiEfetuado())
+        {
+            Situacao = SituacaoAgendamento.Aceito;
+            ModificadoEm = DateTime.UtcNow;
+            return;
+        }
+        throw new ExcecaoDominio("O agendamento não pode ser aceito", nameof(AceitarAgendamento), nameof(Situacao));
     }
 
     public void AlterarDataAgendamento(DateOnly novaDataAgendamento, DateOnly dataAtualizacaoAgendamento)

@@ -747,7 +747,7 @@ public class AgendamentoTestes
         TimeSpan horarioFimAgendamento = new(12, 30, 0);
         decimal valorAgendamento = 100;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: new(2025, 2, 1));
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 1));
 
         // Act
         agendamento.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 1));
@@ -755,5 +755,27 @@ public class AgendamentoTestes
         // Assert
         agendamento.Situacao.Should().Be(SituacaoAgendamento.Aceito);
         agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
+    }
+
+    [Fact(DisplayName = "Situação inválida para aceitar o agendamento")]
+    [Trait("Action", "AceitarAgendamento")]
+    public void AceitarAgendamento_AgendamentoComSituacaoInvalida_NaoDeveAceitarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.AceitarAgendamento(dataAceitacaoAgendamento: new DateOnly(2025, 2, 1)));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento.AceitarAgendamento));
+        excecao.Propriedade.Should().Be(nameof(Agendamento.Situacao));
     }
 }
