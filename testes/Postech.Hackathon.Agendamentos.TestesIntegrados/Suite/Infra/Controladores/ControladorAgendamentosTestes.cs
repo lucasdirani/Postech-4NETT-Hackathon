@@ -499,4 +499,23 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeTrue();
         conteudoMensagemResposta.Mensagens.Should().BeNullOrEmpty();
     }
+
+    [Fact(DisplayName = "Corpo da requisição não fornecido no endpoint /agendamentos/{idAgendamento}")]
+    [Trait("Action", "PATCH /agendamentos/{idAgendamento}")]
+    public async Task PatchAgendamentos_RequisicaoSemCorpoConfirmacaoAgendamento_DeveRetornar400BadRequest()
+    {
+        // Arrange
+        Guid idAgendamento = Guid.NewGuid();
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{idAgendamento}"));
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        ComandoRespostaGenerico<ComandoRespostaConfirmacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaConfirmacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
 }

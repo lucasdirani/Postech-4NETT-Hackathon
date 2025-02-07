@@ -43,6 +43,12 @@ public class ControladorAgendamentos
         });
         http.On<ComandoRequisicaoConfirmacaoAgendamento, ComandoRespostaConfirmacaoAgendamento>(HttpMethod.Patch.ToString(), "/agendamentos/{idAgendamento}", async (corpo, valoresRota, serviceProvider) =>
         {
+            INotificador notificador = serviceProvider.GetRequiredService<INotificador>();
+            if (corpo is null)
+            {
+                notificador.Processar(new Notificacao() { Mensagem = "Não foi possível ler o corpo da requisição", Tipo = TipoNotificacao.Erro });
+                return new() { Mensagens = notificador.ObterNotificacoes(), CodigoResposta = (int) HttpStatusCode.BadRequest };
+            }
             _ = Guid.TryParse(valoresRota["idAgendamento"]?.ToString(), out Guid idAgendamento);
             if (corpo.Acao.Equals(AcaoConfirmacaoAgendamento.Aceitar))
             {
