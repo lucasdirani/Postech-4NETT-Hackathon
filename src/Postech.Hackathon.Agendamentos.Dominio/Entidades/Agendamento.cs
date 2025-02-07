@@ -50,12 +50,16 @@ public class Agendamento : EntidadeBase
 
     public void AceitarAgendamento(DateOnly dataAceitacaoAgendamento)
     {
+        if (dataAceitacaoAgendamento >= Data)
+        {
+            throw new ExcecaoDominio("A data de aceitação deve ser anterior a data do agendamento", nameof(AceitarAgendamento), nameof(dataAceitacaoAgendamento));
+        }
         if (AgendamentoFoiEfetuado())
         {
             Situacao = SituacaoAgendamento.Aceito;
             ModificadoEm = DateTime.UtcNow;
             return;
-        }
+        }    
         throw new ExcecaoDominio("O agendamento não pode ser aceito", nameof(AceitarAgendamento), nameof(Situacao));
     }
 

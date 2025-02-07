@@ -686,7 +686,7 @@ public class AgendamentoTestes
         excecao.Propriedade.Should().Be(nameof(idPaciente));
     }
 
-    [Fact(DisplayName = "Agendamento efetuado na mesma data em que o agendamento foi cadastrado")]
+    [Fact(DisplayName = "Agendamento efetuado na mesma data em que foi cadastrado")]
     [Trait("Action", "EfetuarAgendamento")]
     public void EfetuarAgendamento_AgendamentoEfetuadoMesmaDataAgendamento_NaoDeveEfetuarAgendamento()
     {
@@ -777,5 +777,29 @@ public class AgendamentoTestes
         excecao.Mensagem.Should().NotBeNullOrEmpty();
         excecao.Acao.Should().Be(nameof(Agendamento.AceitarAgendamento));
         excecao.Propriedade.Should().Be(nameof(Agendamento.Situacao));
+    }
+
+    [Fact(DisplayName = "Agendamento aceito na mesma data em que foi cadastrado")]
+    [Trait("Action", "AceitarAgendamento")]
+    public void AceitarAgendamento_AgendamentoAceitoMesmaDataAgendamento_NaoDeveAceitarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        DateOnly dataAceitacaoAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: new(2025, 2, 1));
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.AceitarAgendamento(dataAceitacaoAgendamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento.AceitarAgendamento));
+        excecao.Propriedade.Should().Be(nameof(dataAceitacaoAgendamento));
     }
 }
