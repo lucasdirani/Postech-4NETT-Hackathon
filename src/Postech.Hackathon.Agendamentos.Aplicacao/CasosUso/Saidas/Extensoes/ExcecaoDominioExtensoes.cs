@@ -16,4 +16,13 @@ internal static class ExcecaoDominioExtensoes
             _ => SituacaoEdicaoAgendamento.DadosInvalidos
         };
     }
+
+    public static SituacaoEfetuacaoAgendamento ObterSituacaoEfetuacaoAgendamento(this ExcecaoDominio excecao)
+    {
+        return excecao.Propriedade switch
+        {
+            nameof(Agendamento.Situacao) => SituacaoEfetuacaoAgendamento.EfetuacaoNaoProcessavel,
+            _ => SituacaoEfetuacaoAgendamento.DadosInvalidos
+        };
+    }
 }

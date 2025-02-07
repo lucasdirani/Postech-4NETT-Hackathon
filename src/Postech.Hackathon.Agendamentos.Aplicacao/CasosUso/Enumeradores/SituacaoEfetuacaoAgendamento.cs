@@ -6,4 +6,5 @@ public enum SituacaoEfetuacaoAgendamento
     AgendamentoNaoEncontrado,
     Conflito,
     DadosInvalidos,
+    EfetuacaoNaoProcessavel,
 }
