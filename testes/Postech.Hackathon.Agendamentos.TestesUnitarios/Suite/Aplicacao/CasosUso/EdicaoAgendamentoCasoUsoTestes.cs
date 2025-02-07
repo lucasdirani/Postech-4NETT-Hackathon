@@ -285,7 +285,7 @@ public class EdicaoAgendamentoCasoUsoTestes
         EdicaoAgendamentoSaida saida = await casoUso.ExecutarAsync(entrada);
 
         // Assert
-        saida.SituacaoEdicaoAgendamento.Should().Be(SituacaoEdicaoAgendamento.DadosInvalidos);
+        saida.SituacaoEdicaoAgendamento.Should().Be(SituacaoEdicaoAgendamento.EdicaoNaoProcessavel);
         saida.Mensagem.Should().NotBeNullOrEmpty();
         repositorio.Verify(r => r.ObterPorIdAsync(agendamento.Id), Times.Once());
         repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, novaDataAgendamento), Times.Never());
@@ -326,7 +326,7 @@ public class EdicaoAgendamentoCasoUsoTestes
         EdicaoAgendamentoSaida saida = await casoUso.ExecutarAsync(entrada);
 
         // Assert
-        saida.SituacaoEdicaoAgendamento.Should().Be(SituacaoEdicaoAgendamento.DadosInvalidos);
+        saida.SituacaoEdicaoAgendamento.Should().Be(SituacaoEdicaoAgendamento.EdicaoNaoProcessavel);
         saida.Mensagem.Should().NotBeNullOrEmpty();
         repositorio.Verify(r => r.ObterPorIdAsync(agendamento.Id), Times.Once());
         repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, novaDataAgendamento), Times.Never());

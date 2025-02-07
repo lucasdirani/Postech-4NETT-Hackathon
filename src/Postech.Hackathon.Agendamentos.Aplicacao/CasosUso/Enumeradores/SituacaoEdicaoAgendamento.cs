@@ -7,4 +7,5 @@ public enum SituacaoEdicaoAgendamento
     EdicaoNaoPermitida,
     DadosInvalidos,
     Conflito,
+    EdicaoNaoProcessavel,
 }
