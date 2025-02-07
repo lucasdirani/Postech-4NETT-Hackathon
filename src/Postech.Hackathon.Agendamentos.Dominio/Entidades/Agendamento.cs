@@ -112,9 +112,9 @@ public class Agendamento : EntidadeBase
         {
             throw new ExcecaoDominio("O valor do agendamento deve ser maior do que zero", nameof(AlterarValorAgendamento), nameof(novoValorAgendamento));
         }
-        if (AgendamentoFoiAceito())
+        if (AgendamentoFoiAceito() || AgendamentoFoiEfetuado())
         {
-            throw new ExcecaoDominio("O valor não pode ser alterado com o agendamento aceito", nameof(AlterarValorAgendamento), nameof(Situacao));
+            throw new ExcecaoDominio("O valor não pode ser alterado com o agendamento aceito ou efetuado", nameof(AlterarValorAgendamento), nameof(Situacao));
         }
         Valor = novoValorAgendamento;
     }

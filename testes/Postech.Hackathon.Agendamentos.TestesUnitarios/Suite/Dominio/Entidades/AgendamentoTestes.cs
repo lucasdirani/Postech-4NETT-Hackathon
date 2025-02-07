@@ -510,4 +510,28 @@ public class AgendamentoTestes
         excecao.Acao.Should().Be(nameof(Agendamento.AlterarValorAgendamento));
         excecao.Propriedade.Should().Be(nameof(Agendamento.Situacao));
     }
+
+    [Fact(DisplayName = "Alterar o valor de um agendamento que está efetuado")]
+    [Trait("Action", "AlterarValorAgendamento")]
+    public void AlterarValorAgendamento_AlterarValorAgendamentoEfetuado_DeveLancarExcecaoDeDominio()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        agendamento.EfetuarAgendamento();
+        decimal novoValorAgendamento = 150;
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.AlterarValorAgendamento(novoValorAgendamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento.AlterarValorAgendamento));
+        excecao.Propriedade.Should().Be(nameof(Agendamento.Situacao));
+    }
 }
