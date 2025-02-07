@@ -25,6 +25,11 @@ public static class AdaptadorAceitacaoAgendamento
                 CodigoResposta = (int)HttpStatusCode.BadRequest,
                 Mensagens = [new Notificacao() { Mensagem = "Uma ou mais propriedades estão inválidas", Tipo = TipoNotificacao.Erro }]
             },
+            SituacaoAceitacaoAgendamento.AceitacaoNaoPermitida => new()
+            {
+                CodigoResposta = (int)HttpStatusCode.Forbidden,
+                Mensagens = [new Notificacao() { Mensagem = "Aceitação não autorizada", Tipo = TipoNotificacao.Erro }]
+            },
             _ => throw new NotImplementedException()
         };
     }
