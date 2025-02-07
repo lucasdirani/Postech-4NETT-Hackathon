@@ -11,5 +11,7 @@ internal static class CasoUsoSetup
     {
         servicos.AddScoped<ICadastroAgendamentoCasoUso, CadastroAgendamentoCasoUso>();
         servicos.AddScoped<IEdicaoAgendamentoCasoUso, EdicaoAgendamentoCasoUso>();
+        servicos.AddScoped<IEfetuacaoAgendamentoCasoUso, EfetuacaoAgendamentoCasoUso>();
+        servicos.AddScoped<IAceitacaoAgendamentoCasoUso, AceitacaoAgendamentoCasoUso>();
     }
 }
