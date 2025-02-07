@@ -31,6 +31,18 @@ public class RepositorioAgendamento(AgendamentoDbContext dbContext) : IRepositor
         return await _dbContext.Agendamentos.Where(a => a.IdMedico == idMedico && a.Data == dataAgendamento).ToListAsync();
     }
 
+    public async Task<(IReadOnlyList<Agendamento>, int)> ConsultarAgendamentosMedicoAsync(Guid idMedico, int pagina, int tamanhoPagina)
+    {
+        IQueryable<Agendamento> consulta = _dbContext.Agendamentos.Where(a => a.IdMedico == idMedico);
+        int totalRegistros = await consulta.CountAsync();
+        List<Agendamento> agendamentos = await consulta
+            .OrderBy(a => a.Data)
+            .Skip((pagina - 1) * tamanhoPagina)
+            .Take(tamanhoPagina)
+            .ToListAsync();
+        return (agendamentos, totalRegistros);
+    }
+
     public async Task<List<Agendamento>> EncontrarAsync(Expression<Func<Agendamento, bool>> expressao)
     {
         return await _dbContext.Agendamentos.Where(expressao).ToListAsync();
