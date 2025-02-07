@@ -14,6 +14,7 @@ public class AceitacaoAgendamentoCasoUso(IRepositorioAgendamento repositorio) : 
     public async Task<AceitacaoAgendamentoSaida> ExecutarAsync(AceitacaoAgendamentoEntrada entrada)
     {
         Agendamento? agendamento = await _repositorio.ObterPorIdAsync(entrada.IdAgendamento);
+        if (agendamento is null) return new() { SituacaoAceitacaoAgendamento = SituacaoAceitacaoAgendamento.AgendamentoNaoEncontrado, Mensagem = "Agendamento inexistente" };
         agendamento.AceitarAgendamento(entrada.DataAceitacao);
         _repositorio.Atualizar(agendamento);
         await _repositorio.SalvarAlteracoesAsync();

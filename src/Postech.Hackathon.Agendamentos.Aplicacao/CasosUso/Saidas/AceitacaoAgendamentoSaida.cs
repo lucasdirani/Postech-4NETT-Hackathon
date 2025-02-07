@@ -7,4 +7,5 @@ namespace Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Saidas;
 public record AceitacaoAgendamentoSaida
 {
     public SituacaoAceitacaoAgendamento SituacaoAceitacaoAgendamento { get; init; }
+    public string? Mensagem { get; init; }
 }
