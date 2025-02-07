@@ -76,11 +76,15 @@ public class Agendamento : EntidadeBase
         return Situacao is SituacaoAgendamento.Efetuado;
     }
 
-    public void EfetuarAgendamento(Guid idPaciente)
+    public void EfetuarAgendamento(Guid idPaciente, DateOnly dataEfetuacaoAgendamento)
     {
         if (idPaciente.EstaVazio())
         {
             throw new ExcecaoDominio("O identificador do paciente é obrigatório", nameof(EfetuarAgendamento), nameof(idPaciente));
+        }
+        if (dataEfetuacaoAgendamento == Data)
+        {
+            throw new ExcecaoDominio("A data de efetuação deve ser anterior a data do agendamento", nameof(EfetuarAgendamento), nameof(dataEfetuacaoAgendamento));
         }
         if (AgendamentoEstaCriado())
         {

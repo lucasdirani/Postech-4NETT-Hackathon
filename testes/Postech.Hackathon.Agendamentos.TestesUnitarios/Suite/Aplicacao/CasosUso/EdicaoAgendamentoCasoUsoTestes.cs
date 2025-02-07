@@ -302,13 +302,14 @@ public class EdicaoAgendamentoCasoUsoTestes
         DateOnly dataAgendamento = new(2025, 2, 7);
         DateOnly novaDataAgendamento = new (2025, 2, 8);
         DateOnly dataAtualizacaoAgendamento = new(2025, 2, 7);
+        DateOnly dataEfetuacaoAgendamento = new(2025, 2, 6);
         TimeSpan horarioInicioAgendamento = new(12, 0, 0);
         TimeSpan horarioFimAgendamento = new(13, 0, 0);
         DateOnly dataAtual = new(2025, 2, 5);
         decimal valorAgendamento = 100;
         decimal novoValorAgendamento = 50;
         Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
-        agendamento.EfetuarAgendamento(idPaciente);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento);
         Mock<IRepositorioAgendamento> repositorio = new();  
         repositorio.Setup(r => r.ObterPorIdAsync(agendamento.Id)).ReturnsAsync(() => agendamento);
         EdicaoAgendamentoEntrada entrada = new()
