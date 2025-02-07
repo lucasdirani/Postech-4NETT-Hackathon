@@ -6,4 +6,5 @@ public enum SituacaoAceitacaoAgendamento
     AgendamentoNaoEncontrado,
     AceitacaoNaoPermitida,
     DadosInvalidos,
+    AceitacaoNaoProcessavel,
 }

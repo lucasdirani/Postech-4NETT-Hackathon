@@ -2,6 +2,7 @@ using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Entradas;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Enumeradores;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Interfaces;
 using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Saidas;
+using Postech.Hackathon.Agendamentos.Aplicacao.CasosUso.Saidas.Extensoes;
 using Postech.Hackathon.Agendamentos.Dominio.Entidades;
 using Postech.Hackathon.Agendamentos.Dominio.Excecoes.Comum;
 using Postech.Hackathon.Agendamentos.Dominio.Repositorios;
@@ -26,7 +27,7 @@ public class AceitacaoAgendamentoCasoUso(IRepositorioAgendamento repositorio) : 
         }
         catch (ExcecaoDominio ex)
         {
-            return new() { SituacaoAceitacaoAgendamento = SituacaoAceitacaoAgendamento.DadosInvalidos, Mensagem = ex.Mensagem };
+            return new() { SituacaoAceitacaoAgendamento = ex.ObterSituacaoAceitacaoAgendamento(), Mensagem = ex.Mensagem };
         }
     }
 }

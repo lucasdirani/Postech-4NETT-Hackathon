@@ -141,4 +141,36 @@ public class AceitacaoAgendamentoCasoUsoTestes
         repositorio.Verify(r => r.ObterPorIdAsync(agendamentoSendoAceito.Id), Times.Once());
         repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
     }
+
+    [Fact(DisplayName = "Aceitar agendamento que não foi efetuado pelo paciente")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_AceitarAgendamentoNaoEfetuadoPeloPaciente_NaoDeveAceitarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = new(2025, 2, 7);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(13, 0, 0);
+        DateOnly dataCadastro = new(2025, 2, 5);
+        decimal valorAgendamento = 100;
+        Agendamento agendamentoSendoAceito = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        Mock<IRepositorioAgendamento> repositorio = new();  
+        repositorio.Setup(r => r.ObterPorIdAsync(agendamentoSendoAceito.Id)).ReturnsAsync(() => agendamentoSendoAceito);
+        AceitacaoAgendamentoEntrada entrada = new()
+        {
+            IdAgendamento = agendamentoSendoAceito.Id,
+            IdMedico = idMedico,
+            DataAceitacao = new DateOnly(2025, 2, 6)
+        };
+        AceitacaoAgendamentoCasoUso casoUso = new(repositorio.Object);
+
+        // Act
+        AceitacaoAgendamentoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.SituacaoAceitacaoAgendamento.Should().Be(SituacaoAceitacaoAgendamento.AceitacaoNaoProcessavel);
+        saida.Mensagem.Should().NotBeNullOrEmpty();
+        repositorio.Verify(r => r.ObterPorIdAsync(agendamentoSendoAceito.Id), Times.Once());
+        repositorio.Verify(r => r.SalvarAlteracoesAsync(), Times.Never());
+    }
 }
