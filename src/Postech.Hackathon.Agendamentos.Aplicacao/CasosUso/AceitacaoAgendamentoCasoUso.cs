@@ -15,6 +15,7 @@ public class AceitacaoAgendamentoCasoUso(IRepositorioAgendamento repositorio) : 
     {
         Agendamento? agendamento = await _repositorio.ObterPorIdAsync(entrada.IdAgendamento);
         if (agendamento is null) return new() { SituacaoAceitacaoAgendamento = SituacaoAceitacaoAgendamento.AgendamentoNaoEncontrado, Mensagem = "Agendamento inexistente" };
+        if (!agendamento.PertenceMedico(entrada.IdMedico)) return new() { SituacaoAceitacaoAgendamento = SituacaoAceitacaoAgendamento.AceitacaoNaoPermitida, Mensagem = "Aceitação não permitida" };
         agendamento.AceitarAgendamento(entrada.DataAceitacao);
         _repositorio.Atualizar(agendamento);
         await _repositorio.SalvarAlteracoesAsync();

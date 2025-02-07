@@ -4,4 +4,5 @@ public enum SituacaoAceitacaoAgendamento
 {
     Sucesso,
     AgendamentoNaoEncontrado,
+    AceitacaoNaoPermitida,
 }
