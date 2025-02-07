@@ -82,7 +82,7 @@ public class Agendamento : EntidadeBase
         {
             throw new ExcecaoDominio("O identificador do paciente é obrigatório", nameof(EfetuarAgendamento), nameof(idPaciente));
         }
-        if (dataEfetuacaoAgendamento == Data)
+        if (dataEfetuacaoAgendamento >= Data)
         {
             throw new ExcecaoDominio("A data de efetuação deve ser anterior a data do agendamento", nameof(EfetuarAgendamento), nameof(dataEfetuacaoAgendamento));
         }

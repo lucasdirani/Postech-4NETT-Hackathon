@@ -704,4 +704,28 @@ public class AgendamentoTestes
         excecao.Acao.Should().Be(nameof(Agendamento.EfetuarAgendamento));
         excecao.Propriedade.Should().Be(nameof(dataEfetuacaoAgendamento));
     }
+
+    [Fact(DisplayName = "Agendamento efetuado depois da data do agendamento")]
+    [Trait("Action", "EfetuarAgendamento")]
+    public void EfetuarAgendamento_AgendamentoEfetuadoDepoisDataAgendamento_NaoDeveEfetuarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        DateOnly dataEfetuacaoAgendamento = new(2025, 2, 4);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento.EfetuarAgendamento));
+        excecao.Propriedade.Should().Be(nameof(dataEfetuacaoAgendamento));
+    }
 }
