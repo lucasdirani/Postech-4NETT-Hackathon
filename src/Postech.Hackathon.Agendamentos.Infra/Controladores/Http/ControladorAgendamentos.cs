@@ -29,6 +29,12 @@ public class ControladorAgendamentos
         });
         http.On<ComandoRequisicaoEdicaoAgendamento, ComandoRespostaEdicaoAgendamento>(HttpMethod.Put.ToString(), "/agendamentos/{idAgendamento}", async (corpo, valoresRota, serviceProvider) =>
         {
+            INotificador notificador = serviceProvider.GetRequiredService<INotificador>();
+            if (corpo is null)
+            {
+                notificador.Processar(new Notificacao() { Mensagem = "Não foi possível ler o corpo da requisição", Tipo = TipoNotificacao.Erro });
+                return new() { Mensagens = notificador.ObterNotificacoes(), CodigoResposta = (int) HttpStatusCode.BadRequest };
+            }
             IEdicaoAgendamentoCasoUso casoUso = serviceProvider.GetRequiredService<IEdicaoAgendamentoCasoUso>();
             _ = Guid.TryParse(valoresRota["idAgendamento"]?.ToString(), out Guid idAgendamento);
             EdicaoAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaEdicaoAgendamentoEntrada(idAgendamento));
