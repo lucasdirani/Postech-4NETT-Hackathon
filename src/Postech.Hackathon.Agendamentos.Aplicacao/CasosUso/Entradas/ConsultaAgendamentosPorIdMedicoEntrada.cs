@@ -12,6 +12,6 @@ public record ConsultaAgendamentosPorIdMedicoEntrada
 
     internal bool NaoEstaValida()
     {
-        return IdMedico.EstaVazio();
+        return IdMedico.EstaVazio() || TamanhoPagina <= 0;
     }
 }
