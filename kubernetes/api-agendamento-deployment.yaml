@@ -53,7 +53,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: techchallenge-hackathon-api-agendamento
+    name: hackathon-api-agendamento
   minReplicas: 1
   maxReplicas: 4
   metrics:
