@@ -4,7 +4,7 @@ using Postech.Hackathon.Agendamentos.Infra.Controladores.Http;
 using Postech.Hackathon.Agendamentos.Infra.Http.Adaptadores;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://*:5011");
+builder.WebHost.UseUrls("http://*:5060");
 builder.Configuration.AdicionarArquivoJsonPeloAmbiente(builder.Environment.EnvironmentName);
 
 builder.Services.AddEndpointsApiExplorer();
