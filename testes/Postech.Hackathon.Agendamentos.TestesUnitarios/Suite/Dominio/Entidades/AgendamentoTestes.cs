@@ -826,4 +826,29 @@ public class AgendamentoTestes
         excecao.Acao.Should().Be(nameof(Agendamento.AceitarAgendamento));
         excecao.Propriedade.Should().Be(nameof(dataAceitacaoAgendamento));
     }
+
+    [Fact(DisplayName = "Recusar agendamento com situação válida")]
+    [Trait("Action", "RecusarAgendamento")]
+    public void RecusarAgendamento_AgendamentoComSituacaoValida_DeveRecusarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 1));
+        string justificativaRecusa = "Estarei ausente em plantão no hospital";
+
+        // Act
+        agendamento.RecusarAgendamento(dataRecusaAgendamento: new DateOnly(2025, 2, 1), justificativaRecusa);
+
+        // Assert
+        agendamento.Situacao.Should().Be(SituacaoAgendamento.Recusado);
+        agendamento.JustificativaRecusa.Should().Be(justificativaRecusa);
+        agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
+    }
 }

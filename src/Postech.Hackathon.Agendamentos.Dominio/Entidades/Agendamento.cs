@@ -47,6 +47,7 @@ public class Agendamento : EntidadeBase
     public TimeSpan HorarioFim { get; private set; }
     public decimal Valor { get; private set; }
     public SituacaoAgendamento Situacao { get; private set; }
+    public string? JustificativaRecusa { get; private set; }
 
     public void AceitarAgendamento(DateOnly dataAceitacaoAgendamento)
     {
@@ -156,5 +157,12 @@ public class Agendamento : EntidadeBase
     public bool PertenceMedico(Guid idMedico)
     {
         return IdMedico == idMedico;
+    }
+
+    public void RecusarAgendamento(DateOnly dataRecusaAgendamento, string justificativaRecusa)
+    {
+        ModificadoEm = DateTime.UtcNow;
+        JustificativaRecusa = justificativaRecusa;
+        Situacao = SituacaoAgendamento.Recusado;
     }
 }

@@ -68,6 +68,11 @@ internal class ConfigAgendamento : IEntityTypeConfiguration<Agendamento>
             .HasColumnName("Situacao")
             .IsRequired();
         builder
+            .Property(a => a.JustificativaRecusa)
+            .HasColumnType("varchar")
+            .HasMaxLength(60)
+            .HasColumnName("Justificativa_Recusa");
+        builder
             .HasIndex(a => new { a.IdMedico, a.Data })
             .HasDatabaseName("ix_tb_agendamentos_id_medico_data");
     }

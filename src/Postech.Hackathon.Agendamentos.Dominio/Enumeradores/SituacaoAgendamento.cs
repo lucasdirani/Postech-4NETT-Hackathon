@@ -10,4 +10,6 @@ public enum SituacaoAgendamento
     Aceito,
     [Description("EFETUADO")]
     Efetuado,
+    [Description("RECUSADO")]
+    Recusado,
 }
