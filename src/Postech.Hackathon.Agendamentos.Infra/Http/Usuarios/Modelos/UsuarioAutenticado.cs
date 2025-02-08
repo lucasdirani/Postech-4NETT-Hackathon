@@ -13,4 +13,14 @@ public record UsuarioAutenticado
     {
         return Escopos.Contains(escopo);
     }
+
+    public bool UsuarioDoTipoMedico()
+    {
+        return string.Equals(TipoUsuario, "medico", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public bool UsuarioDoTipoPaciente()
+    {
+        return string.Equals(TipoUsuario, "paciente", StringComparison.OrdinalIgnoreCase);
+    }
 }

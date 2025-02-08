@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Postech.Hackathon.Agendamentos.Infra.Http.Usuarios.Constantes;
 using Postech.Hackathon.Agendamentos.Infra.Http.Usuarios.Interfaces;
 using Postech.Hackathon.Agendamentos.Infra.Http.Usuarios.Modelos;
@@ -12,10 +14,16 @@ public class ServicoAutenticacaoUsuario : IServicoAutenticacaoUsuario
 {
     public UsuarioAutenticado ObterUsuario(HttpContext contexto)
     {
-        ClaimsPrincipal usuario = contexto.User;
-        string? idUsuario = usuario.FindFirst(ClaimUsuarioAutenticado.Id)?.Value;
-        string? tipoUsuario = usuario.FindFirst(ClaimUsuarioAutenticado.TipoUsuario)?.Value;
-        List<string>? escopos = [.. usuario.FindAll(ClaimUsuarioAutenticado.Escopos).Select(c => c.Value)];
+        _ = contexto.Request.Headers.TryGetValue("Authorization", out StringValues authorization); 
+        string? token = authorization.ToString().Replace("Bearer ", "", StringComparison.OrdinalIgnoreCase);
+        if (string.IsNullOrWhiteSpace(token)) return new();
+        JwtSecurityTokenHandler handler = new();
+        if (!handler.CanReadToken(token)) return new();
+        JwtSecurityToken jwtToken = handler.ReadJwtToken(token);
+        List<Claim> claims = jwtToken.Claims.ToList();
+        string? idUsuario = claims.FirstOrDefault(c => c.Type == ClaimUsuarioAutenticado.Id)?.Value;
+        string? tipoUsuario = claims.FirstOrDefault(c => c.Type == ClaimUsuarioAutenticado.TipoUsuario)?.Value;
+        List<string>? escopos = [.. claims.Where(c => c.Type == ClaimUsuarioAutenticado.Escopos).Select(c => c.Value)];
         return new UsuarioAutenticado
         {
             Id = Guid.TryParse(idUsuario, out var id) ? id : Guid.Empty,

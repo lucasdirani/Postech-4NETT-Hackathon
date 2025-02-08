@@ -35,7 +35,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -56,7 +56,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
     {
         // Arrange
         HttpRequestMessage requisicao = new(HttpMethod.Post, $"/agendamentos");
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
 
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -90,7 +90,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(stringWriter.ToString(), Encoding.UTF8, "application/xml"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -131,7 +131,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -158,11 +158,11 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             HoraFim = new TimeSpan(12, 30, 0),
             Valor = 0
         };
-        HttpRequestMessage requisicao = new HttpRequestMessage(HttpMethod.Post, $"/agendamentos")
+        HttpRequestMessage requisicao = new(HttpMethod.Post, $"/agendamentos")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -204,7 +204,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -225,7 +225,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         // Arrange
         Guid idAgendamento = Guid.NewGuid();
         HttpRequestMessage requisicao = new(HttpMethod.Put, $"/agendamentos/{idAgendamento}");
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -267,7 +267,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -309,7 +309,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -342,7 +342,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -394,7 +394,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -438,7 +438,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -478,7 +478,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -518,7 +518,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -539,7 +539,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         // Arrange
         Guid idAgendamento = Guid.NewGuid();
         HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{idAgendamento}");
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -579,7 +579,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -619,7 +619,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -659,7 +659,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -690,7 +690,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -721,7 +721,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -765,7 +765,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -806,7 +806,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -847,7 +847,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -887,7 +887,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -915,7 +915,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         int pagina = 0;
         int tamanhoPagina = 0; 
         HttpRequestMessage requisicao = new(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}");
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -951,7 +951,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         int pagina = 1;
         int tamanhoPagina = 5; 
         HttpRequestMessage requisicao = new(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}");
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -992,7 +992,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1034,7 +1034,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1055,7 +1055,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         // Arrange
         Guid idAgendamento = Guid.NewGuid();
         HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{idAgendamento}");
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1096,7 +1096,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1138,7 +1138,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1179,7 +1179,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1221,7 +1221,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1253,7 +1253,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1285,7 +1285,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1327,7 +1327,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoMedico);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
@@ -1370,7 +1370,7 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
         };
-        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValidoPaciente);
         
         // Act
         using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
