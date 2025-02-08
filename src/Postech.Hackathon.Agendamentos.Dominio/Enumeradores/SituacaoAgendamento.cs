@@ -12,4 +12,6 @@ public enum SituacaoAgendamento
     Efetuado,
     [Description("RECUSADO")]
     Recusado,
+    [Description("CANCELADO")]
+    Cancelado,
 }

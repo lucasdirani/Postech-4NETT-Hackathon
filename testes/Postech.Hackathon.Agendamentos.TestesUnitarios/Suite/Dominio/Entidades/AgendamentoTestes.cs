@@ -927,4 +927,105 @@ public class AgendamentoTestes
         excecao.Acao.Should().Be(nameof(Agendamento.RecusarAgendamento));
         excecao.Propriedade.Should().Be(nameof(dataRecusaAgendamento));
     }
+
+    [Fact(DisplayName = "Cancelar agendamento com situação válida")]
+    [Trait("Action", "CancelarAgendamento")]
+    public void CancelarAgendamento_AgendamentoComSituacaoValida_DeveCancelarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 1));
+        string justificativaCancelamento = "Reunião importante no trabalho";
+
+        // Act
+        agendamento.CancelarAgendamento(dataCancelamentoAgendamento: new DateOnly(2025, 2, 1), justificativaCancelamento);
+
+        // Assert
+        agendamento.Situacao.Should().Be(SituacaoAgendamento.Cancelado);
+        agendamento.JustificativaCancelamento.Should().Be(justificativaCancelamento);
+        agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
+    }
+
+    [Fact(DisplayName = "Situação inválida para cancelar o agendamento")]
+    [Trait("Action", "CancelarAgendamento")]
+    public void CancelarAgendamento_AgendamentoComSituacaoInvalida_NaoDeveCancelarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        string justificativaCancelamento = "Reunião importante no trabalho";
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.CancelarAgendamento(dataCancelamentoAgendamento: new DateOnly(2025, 2, 1), justificativaCancelamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento.CancelarAgendamento));
+        excecao.Propriedade.Should().Be(nameof(Agendamento.Situacao));
+    }
+
+    [Fact(DisplayName = "Agendamento cancelado na mesma data em que foi cadastrado")]
+    [Trait("Action", "RecusarAgendamento")]
+    public void CancelarAgendamento_AgendamentoCanceladoMesmaDataAgendamento_NaoDeveCancelarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 1));
+        string justificativaCancelamento = "Reunião importante no trabalho";
+        DateOnly dataCancelamentoAgendamento = new(2025, 2, 2);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.CancelarAgendamento(dataCancelamentoAgendamento, justificativaCancelamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento.CancelarAgendamento));
+        excecao.Propriedade.Should().Be(nameof(dataCancelamentoAgendamento));
+    }
+
+    [Fact(DisplayName = "Agendamento cancelado depois da data do agendamento")]
+    [Trait("Action", "CancelarAgendamento")]
+    public void CancelarAgendamento_AgendamentoCanceladoDepoisDataAgendamento_NaoDeveCancelarAgendamento()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 1));
+        string justificativaCancelamento = "Reunião importante no trabalho";
+        DateOnly dataCancelamentoAgendamento = new(2025, 2, 5);
+
+        // Act
+        ExcecaoDominio excecao = Assert.Throws<ExcecaoDominio>(() => agendamento.CancelarAgendamento(dataCancelamentoAgendamento, justificativaCancelamento));
+
+        // Assert
+        excecao.Mensagem.Should().NotBeNullOrEmpty();
+        excecao.Acao.Should().Be(nameof(Agendamento.CancelarAgendamento));
+        excecao.Propriedade.Should().Be(nameof(dataCancelamentoAgendamento));
+    }
 }

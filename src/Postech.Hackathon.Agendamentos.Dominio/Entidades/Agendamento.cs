@@ -48,6 +48,7 @@ public class Agendamento : EntidadeBase
     public decimal Valor { get; private set; }
     public SituacaoAgendamento Situacao { get; private set; }
     public string? JustificativaRecusa { get; private set; }
+    public string? JustificativaCancelamento { get; private set; }
 
     public void AceitarAgendamento(DateOnly dataAceitacaoAgendamento)
     {
@@ -173,5 +174,21 @@ public class Agendamento : EntidadeBase
             return;
         }
         throw new ExcecaoDominio("O agendamento não pode ser recusado", nameof(RecusarAgendamento), nameof(Situacao));     
+    }
+
+    public void CancelarAgendamento(DateOnly dataCancelamentoAgendamento, string justificativaCancelamento)
+    {
+        if (dataCancelamentoAgendamento >= Data)
+        {
+            throw new ExcecaoDominio("A data de cancelamento deve ser anterior a data do agendamento", nameof(CancelarAgendamento), nameof(dataCancelamentoAgendamento));
+        }
+        if (AgendamentoFoiEfetuado() || AgendamentoFoiAceito())
+        {
+            ModificadoEm = DateTime.UtcNow;
+            JustificativaCancelamento = justificativaCancelamento;
+            Situacao = SituacaoAgendamento.Cancelado;
+            return;
+        }
+        throw new ExcecaoDominio("O agendamento não pode ser cancelado", nameof(CancelarAgendamento), nameof(Situacao));     
     }
 }
