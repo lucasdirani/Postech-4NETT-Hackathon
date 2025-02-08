@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "3ea1850b-747b-4a5b-8e35-aadb8e94ea3c",
+		"name": "[Postech] Hackathon - Microsserviço de Agendamento",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Consultar agendamentos do médico",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:31199/agendamentos?idMedico&pagina&tamanhoPagina",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "31199",
+					"path": [
+						"agendamentos"
+					],
+					"query": [
+						{
+							"key": "idMedico",
+							"value": null
+						},
+						{
+							"key": "pagina",
+							"value": null
+						},
+						{
+							"key": "tamanhoPagina",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastrar agendamento",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idMedico\": \"\",\r\n    \"data\": \"\",\r\n    \"horaInicio\": \"\",\r\n    \"horaFim\": \"\",\r\n    \"valor\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:31199/agendamentos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "31199",
+					"path": [
+						"agendamentos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirmação agendamento",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"acao\": \"ACEITAR\",\r\n    \"idUsuario\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:31199/agendamentos/6bf58536-067f-49a0-97bd-a3b3cd3e9e23",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "31199",
+					"path": [
+						"agendamentos",
+						"6bf58536-067f-49a0-97bd-a3b3cd3e9e23"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Editar agendamento",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idMedico\": \"\",\r\n    \"data\": \"\",\r\n    \"horaInicio\": \"\",\r\n    \"horaFim\": \"\",\r\n    \"valor\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:31199/agendamentos/6bf58536-067f-49a0-97bd-a3b3cd3e9e23",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "31199",
+					"path": [
+						"agendamentos",
+						"6bf58536-067f-49a0-97bd-a3b3cd3e9e23"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Anulação Agendamento",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"acao\": \"RECUSAR\",\r\n    \"idUsuario\": \"\",\r\n    \"justificativa\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:31199/agendamentos/6bf58536-067f-49a0-97bd-a3b3cd3e9e23",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "31199",
+					"path": [
+						"agendamentos",
+						"6bf58536-067f-49a0-97bd-a3b3cd3e9e23"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
