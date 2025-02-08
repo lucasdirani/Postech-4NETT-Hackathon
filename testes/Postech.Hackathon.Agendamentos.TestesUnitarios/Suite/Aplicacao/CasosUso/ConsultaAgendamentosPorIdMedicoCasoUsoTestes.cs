@@ -155,4 +155,40 @@ public class ConsultaAgendamentosPorIdMedicoCasoUsoTestes
         saida.SituacaoConsultaAgendamentosPorIdMedico.Should().Be(SituacaoConsultaAgendamentosPorIdMedico.DadosInvalidos);
         repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, pagina, tamanhoPagina), Times.Never());
     }
+
+    [Fact(DisplayName = "Agendamentos não encontrados para o médico")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_AgendamentosNaoEncontrados_NaoDeveConsultarAgendamentosMedico()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid(); 
+        int pagina = 1;
+        int tamanhoPagina = 5;
+        IReadOnlyList<ProjecaoConsultaAgendamentosPorIdMedico> agendamentosProjecao = [];
+        (IReadOnlyList<ProjecaoConsultaAgendamentosPorIdMedico>, int) agendamentos = new(agendamentosProjecao, agendamentosProjecao.Count); 
+        Mock<IRepositorioAgendamento> repositorio = new();    
+        repositorio
+            .Setup(r => r.ConsultarAgendamentosMedicoAsync(idMedico, pagina, tamanhoPagina))
+            .ReturnsAsync(() => agendamentos);
+        ConsultaAgendamentosPorIdMedicoEntrada entrada = new()
+        {
+            IdMedico = idMedico,
+            Pagina = pagina,
+            TamanhoPagina = tamanhoPagina
+        };
+        ConsultaAgendamentosPorIdMedicoCasoUso casoUso = new(repositorio.Object);
+
+        // Act
+        ConsultaAgendamentosPorIdMedicoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.Agendamentos.Should().BeNullOrEmpty();
+        saida.QuantidadeItens.Should().Be(agendamentos.Item2);
+        saida.TotalPaginas.Should().Be((int)Math.Ceiling((double)agendamentos.Item2 / tamanhoPagina));
+        saida.PaginaAtual.Should().Be(pagina);
+        saida.TamanhoPagina.Should().Be(tamanhoPagina);
+        saida.Mensagem.Should().NotBeNullOrEmpty();
+        saida.SituacaoConsultaAgendamentosPorIdMedico.Should().Be(SituacaoConsultaAgendamentosPorIdMedico.AgendamentoNaoEncontrado);
+        repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, pagina, tamanhoPagina), Times.Once());
+    }
 }

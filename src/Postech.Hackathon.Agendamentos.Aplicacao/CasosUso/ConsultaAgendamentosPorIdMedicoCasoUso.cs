@@ -25,6 +25,15 @@ public class ConsultaAgendamentosPorIdMedicoCasoUso(IRepositorioAgendamento repo
             };
         }
         (IReadOnlyList<ProjecaoConsultaAgendamentosPorIdMedico>, int) agendamentos = await _repositorio.ConsultarAgendamentosMedicoAsync(entrada.IdMedico, entrada.Pagina, entrada.TamanhoPagina);
+        if (!agendamentos.Item1.Any())
+        {
+            return new() { 
+                SituacaoConsultaAgendamentosPorIdMedico = SituacaoConsultaAgendamentosPorIdMedico.AgendamentoNaoEncontrado, 
+                Mensagem = "Nenhum agendamento foi localizado para o médico",
+                PaginaAtual = entrada.Pagina,
+                TamanhoPagina = entrada.TamanhoPagina
+            };
+        }
         return new() {
             Agendamentos = agendamentos.Item1,
             QuantidadeItens = agendamentos.Item2,

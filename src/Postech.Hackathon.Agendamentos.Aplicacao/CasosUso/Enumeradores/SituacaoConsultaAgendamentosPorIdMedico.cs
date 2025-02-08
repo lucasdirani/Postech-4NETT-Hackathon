@@ -4,4 +4,5 @@ public enum SituacaoConsultaAgendamentosPorIdMedico
 {
     Sucesso,
     DadosInvalidos,
+    AgendamentoNaoEncontrado,
 }
