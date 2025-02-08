@@ -1,5 +1,7 @@
 # Postech 4NETT Hackathon
 
+Documentação elaborada para o microsserviço de agendamentos desenvolvido no Hackathon.
+
 ## 📌 Visão Geral
 
 Este repositório contém a implementação de um microsserviço para agendamentos, desenvolvido em **.NET 8.0** e implantado em um ambiente **Kubernetes**. O projeto faz parte de um desafio de arquitetura de microsserviços e mensageria, com foco na escalabilidade e resiliência.
@@ -9,7 +11,6 @@ Este repositório contém a implementação de um microsserviço para agendament
 - **.NET 8.0** – Backend para o microsserviço de agendamentos.
 - **Kubernetes** – Orquestração dos serviços.
 - **PostgreSQL** – Banco de dados.
-- **RabbitMQ** – Mensageria para comunicação entre microsserviços.
 - **TestContainers** – Testes integrados.
 
 ## 📂 Estrutura do Projeto
