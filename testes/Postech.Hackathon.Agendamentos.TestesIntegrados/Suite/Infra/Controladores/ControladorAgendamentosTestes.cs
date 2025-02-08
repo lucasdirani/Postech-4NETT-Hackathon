@@ -853,4 +853,25 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeTrue();
         conteudoMensagemResposta.Mensagens.Should().BeNullOrEmpty();
     }
+
+    [Fact(DisplayName = "Requisição enviada com dados inválidos no endpoint /agendamentos")]
+    [Trait("Action", "GET /agendamentos")]
+    public async Task GetAgendamentos_RequisicaoDadosInvalidos_DeveRetornar400BadRequest()
+    {
+        // Arrange
+        Guid idMedico = Guid.Empty;
+        int pagina = 0;
+        int tamanhoPagina = 0; 
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}"));
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        ComandoRespostaGenerico<ComandoRespostaConsultaAgendamentosPorIdMedico>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaConsultaAgendamentosPorIdMedico>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
 }
