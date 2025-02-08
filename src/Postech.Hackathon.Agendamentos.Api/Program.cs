@@ -9,6 +9,7 @@ builder.Configuration.AdicionarArquivoJsonPeloAmbiente(builder.Environment.Envir
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AdicionarDependenciaRefit(builder.Configuration);
 builder.Services.AdicionarDependenciaNotificador();
 builder.Services.AdicionarDependenciaServicoDominio();
 builder.Services.AdicionarDbContext(builder.Configuration);
