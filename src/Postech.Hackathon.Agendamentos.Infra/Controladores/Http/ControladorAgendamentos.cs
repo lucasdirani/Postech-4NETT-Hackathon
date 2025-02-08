@@ -71,5 +71,28 @@ public class ControladorAgendamentos
             ConsultaAgendamentosPorIdMedicoSaida saida = await casoUso.ExecutarAsync(valoresConsulta.ConverterParaCadastroAgendamentoEntrada());
             return AdaptadorConsultaAgendamentosPorIdMedico.Adaptar(saida);
         });
+        http.On<ComandoRequisicaoAnulacaoAgendamento, ComandoRespostaAnulacaoAgendamento>(HttpMethod.Delete.ToString(), "/agendamentos/{idAgendamento}", async (corpo, valoresRota, valoresConsulta, serviceProvider) =>
+        {
+            INotificador notificador = serviceProvider.GetRequiredService<INotificador>();
+            if (corpo is null)
+            {
+                notificador.Processar(new Notificacao() { Mensagem = "Não foi possível ler o corpo da requisição", Tipo = TipoNotificacao.Erro });
+                return new() { Mensagens = notificador.ObterNotificacoes(), CodigoResposta = (int) HttpStatusCode.BadRequest };
+            }
+            _ = Guid.TryParse(valoresRota["idAgendamento"]?.ToString(), out Guid idAgendamento);
+            if (corpo.Acao.Equals(AcaoAnulacaoAgendamento.Recusar))
+            {
+                IRecusaAgendamentoCasoUso casoUso = serviceProvider.GetRequiredService<IRecusaAgendamentoCasoUso>();
+                RecusaAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaRecusaAgendamentoEntrada(idAgendamento));
+                return AdaptadorRecusaAgendamento.Adaptar(saida);
+            }
+            if (corpo.Acao.Equals(AcaoAnulacaoAgendamento.Cancelar))
+            {
+                ICancelaAgendamentoCasoUso casoUso = serviceProvider.GetRequiredService<ICancelaAgendamentoCasoUso>();
+                CancelaAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaCancelaAgendamentoEntrada(idAgendamento));
+                return AdaptadorCancelaAgendamento.Adaptar(saida);
+            }
+            return new();
+        });
     }
 }

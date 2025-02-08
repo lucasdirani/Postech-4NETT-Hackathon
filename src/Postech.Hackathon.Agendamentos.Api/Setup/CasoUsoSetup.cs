@@ -13,6 +13,8 @@ internal static class CasoUsoSetup
         servicos.AddScoped<IEdicaoAgendamentoCasoUso, EdicaoAgendamentoCasoUso>();
         servicos.AddScoped<IEfetuacaoAgendamentoCasoUso, EfetuacaoAgendamentoCasoUso>();
         servicos.AddScoped<IAceitacaoAgendamentoCasoUso, AceitacaoAgendamentoCasoUso>();
+        servicos.AddScoped<IRecusaAgendamentoCasoUso, RecusaAgendamentoCasoUso>();
+        servicos.AddScoped<ICancelaAgendamentoCasoUso, CancelaAgendamentoCasoUso>();
         servicos.AddScoped<IConsultaAgendamentosPorIdMedicoCasoUso, ConsultaAgendamentosPorIdMedicoCasoUso>();
     }
 }

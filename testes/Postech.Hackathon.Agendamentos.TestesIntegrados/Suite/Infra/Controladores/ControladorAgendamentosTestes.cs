@@ -908,4 +908,401 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
         conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
     }
+
+    [Fact(DisplayName = "Requisição para recusar um agendamento no endpoint /agendamentos/{idAgendamento}")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_RequisicaoValidaRecusarAgendamento_DeveRetornar204NoContent()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)));
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Recusar,
+            IdUsuario = idMedico,
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
+            Justificativa = "Estarei em plantão no hospital"
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().NotBeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeTrue();
+        conteudoMensagemResposta.Mensagens.Should().BeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Requisição para cancelar um agendamento no endpoint /agendamentos/{idAgendamento}")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_RequisicaoValidaCancelarAgendamento_DeveRetornar204NoContent()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)));
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Cancelar,
+            IdUsuario = idPaciente,
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
+            Justificativa = "Reunião importante no trabalho"
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().NotBeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeTrue();
+        conteudoMensagemResposta.Mensagens.Should().BeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Corpo da requisição não fornecido no endpoint /agendamentos/{idAgendamento}")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_RequisicaoSemCorpoAnulacaoAgendamento_DeveRetornar400BadRequest()
+    {
+        // Arrange
+        Guid idAgendamento = Guid.NewGuid();
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{idAgendamento}"));
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Requisição enviada com dados inválidos para recusar um agendamento no endpoint /agendamentos/{idAgendamento}")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_RequisicaoDadosInvalidosRecusarAgendamento_DeveRetornar400BadRequest()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(-3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(-4));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(-4)));
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Recusar,
+            IdUsuario = idMedico,
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today),
+            Justificativa = string.Empty
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Requisição enviada com dados inválidos para cancelar um agendamento no endpoint /agendamentos/{idAgendamento}")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_RequisicaoDadosInvalidosCancelarAgendamento_DeveRetornar400BadRequest()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(-3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(-4));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(-4)));
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Cancelar,
+            IdUsuario = idPaciente,
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today),
+            Justificativa = string.Empty
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Médico que enviou agendamento para recusa no endpoint /agendamentos/{idAgendamento} não realizou o seu cadastro")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_MedicoQueRecusouAgendamentoNaoRealizouCadastro_DeveRetornar403Forbidden()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)));
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Recusar,
+            IdUsuario = Guid.NewGuid(),
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
+            Justificativa = "Estarei em plantão no hospital"
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Paciente que enviou agendamento para cancelamento no endpoint /agendamentos/{idAgendamento} não efetuou")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_PacienteQueCancelouAgendamentoNaoEfetuou_DeveRetornar403Forbidden()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)));
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Cancelar,
+            IdUsuario = idPaciente,
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
+            Justificativa = "Reunião importante no trabalho"
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Agendamento enviado para recusa no endpoint /agendamentos/{idAgendamento} não foi encontrado")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_AgendamentoNaoEncontradoParaRecusa_DeveRetornar404NotFound()
+    {
+        // Arrange
+        Guid idAgendamento = Guid.NewGuid();
+        Guid idMedico = Guid.NewGuid();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Recusar,
+            IdUsuario = idMedico,
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
+            Justificativa = "Estarei em plantão no hospital"
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{idAgendamento}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Agendamento enviado para cancelamento no endpoint /agendamentos/{idAgendamento} não foi encontrado")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_AgendamentoNaoEncontradoParaCancelamento_DeveRetornar404NotFound()
+    {
+        // Arrange
+        Guid idAgendamento = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Cancelar,
+            IdUsuario = idPaciente,
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
+            Justificativa = "Reunião importante no trabalho"
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{idAgendamento}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Agendamento para recusa no endpoint /agendamentos/{idAgendamento} já foi recusado")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_AgendamentoEnviadoParaRecusaJaFoiRecusado_DeveRetornar422UnprocessableEntity()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente: Guid.NewGuid(), dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)));
+        agendamento.RecusarAgendamento(dataRecusaAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)), justificativaRecusa: "Problemas familiares");
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Recusar,
+            IdUsuario = idMedico,
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
+            Justificativa = "Problemas familiares"
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact(DisplayName = "Agendamento enviado para cancelamento no endpoint /agendamentos/{idAgendamento} já foi cancelado")]
+    [Trait("Action", "DELETE /agendamentos/{idAgendamento}")]
+    public async Task DeleteAgendamentos_AgendamentoEnviadoParaCancelamentoJaFoiCancelado_DeveRetornar422UnprocessableEntity()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAgendamento = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+        DateOnly dataCadastro = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+        decimal valorAgendamento = 100;
+        TimeSpan horarioInicioAgendamento = new(9, 0, 0);
+        TimeSpan horarioFimAgendamento = new(10, 0, 0);
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataCadastro, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)));
+        agendamento.CancelarAgendamento(dataCancelamentoAgendamento: DateOnly.FromDateTime(DateTime.Today.AddDays(2)), justificativaCancelamento: "Reunião importante no trabalho");
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamento);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoAnulacaoAgendamento comandoRequisicao = new()
+        {
+            Acao = AcaoAnulacaoAgendamento.Cancelar,
+            IdUsuario = idPaciente,
+            DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
+            Justificativa = "Reunião importante no trabalho"
+        };
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+        ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaAnulacaoAgendamento>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
 }

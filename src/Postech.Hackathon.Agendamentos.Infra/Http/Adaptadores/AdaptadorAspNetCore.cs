@@ -44,6 +44,11 @@ public class AdaptadorAspNetCore(WebApplication app) : IHttp
                 contexto.Response.StatusCode = (int) HttpStatusCode.UnsupportedMediaType;
                 await contexto.Response.WriteAsync(ex.Message, token);
             }
+            catch (Exception ex)
+            {
+                contexto.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+                await contexto.Response.WriteAsync(ex.Message, token);
+            }
         });
     }
 
