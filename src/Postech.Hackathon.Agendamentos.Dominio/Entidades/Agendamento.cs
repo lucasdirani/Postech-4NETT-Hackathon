@@ -161,8 +161,13 @@ public class Agendamento : EntidadeBase
 
     public void RecusarAgendamento(DateOnly dataRecusaAgendamento, string justificativaRecusa)
     {
-        ModificadoEm = DateTime.UtcNow;
-        JustificativaRecusa = justificativaRecusa;
-        Situacao = SituacaoAgendamento.Recusado;
+        if (AgendamentoFoiEfetuado())
+        {
+            ModificadoEm = DateTime.UtcNow;
+            JustificativaRecusa = justificativaRecusa;
+            Situacao = SituacaoAgendamento.Recusado;
+            return;
+        }
+        throw new ExcecaoDominio("O agendamento não pode ser recusado", nameof(RecusarAgendamento), nameof(Situacao));     
     }
 }
