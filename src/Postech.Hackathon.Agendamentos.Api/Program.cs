@@ -11,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AdicionarDependenciaRefit(builder.Configuration);
 builder.Services.AdicionarDependenciaNotificador();
+builder.Services.AdicionarDependenciaServicoInfra();
 builder.Services.AdicionarDependenciaServicoDominio();
 builder.Services.AdicionarDbContext(builder.Configuration);
 builder.Services.AdicionarDependenciaRepositorio();
