@@ -55,8 +55,42 @@ public class ConsultaAgendamentosPorIdMedicoCasoUsoTestes
 
         // Assert
         saida.Agendamentos.Should().NotBeNullOrEmpty();
-        saida.QuantidadeItens.Should().Be(agendamentos.Item1.Count);
+        saida.QuantidadeItens.Should().Be(agendamentos.Item2);
+        saida.TotalPaginas.Should().Be((int)Math.Ceiling((double)agendamentos.Item2 / tamanhoPagina));
+        saida.PaginaAtual.Should().Be(pagina);
+        saida.TamanhoPagina.Should().Be(tamanhoPagina);
         saida.SituacaoConsultaAgendamentosPorIdMedico.Should().Be(SituacaoConsultaAgendamentosPorIdMedico.Sucesso);
         repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, pagina, tamanhoPagina), Times.Once());
+    }
+
+    [Fact(DisplayName = "Médico não identificado para consulta de agendamentos")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_MedicoNaoIdentificado_NaoDeveConsultarAgendamentosMedico()
+    {
+        // Arrange
+        Guid idMedico = Guid.Empty; 
+        int pagina = 1;
+        int tamanhoPagina = 5;
+        ConsultaAgendamentosPorIdMedicoEntrada entrada = new()
+        {
+            IdMedico = idMedico,
+            Pagina = pagina,
+            TamanhoPagina = tamanhoPagina
+        };
+        Mock<IRepositorioAgendamento> repositorio = new(); 
+        ConsultaAgendamentosPorIdMedicoCasoUso casoUso = new(repositorio.Object);
+
+        // Act
+        ConsultaAgendamentosPorIdMedicoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.Agendamentos.Should().BeNullOrEmpty();
+        saida.QuantidadeItens.Should().Be(0);
+        saida.TotalPaginas.Should().Be(0);
+        saida.Mensagem.Should().NotBeNullOrEmpty();
+        saida.PaginaAtual.Should().Be(pagina);
+        saida.TamanhoPagina.Should().Be(tamanhoPagina);
+        saida.SituacaoConsultaAgendamentosPorIdMedico.Should().Be(SituacaoConsultaAgendamentosPorIdMedico.DadosInvalidos);
+        repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, pagina, tamanhoPagina), Times.Never());
     }
 }
