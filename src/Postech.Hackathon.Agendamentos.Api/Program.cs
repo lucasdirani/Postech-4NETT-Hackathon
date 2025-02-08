@@ -19,6 +19,7 @@ builder.Services.AdicionarDependenciaCasoUso();
 WebApplication app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UsarMiddlewareValidacaoToken();
 
 AdaptadorAspNetCore http = new(app);
 _ = new ControladorAgendamentos(http);
