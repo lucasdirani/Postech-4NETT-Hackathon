@@ -26,33 +26,7 @@ jobs:
 
             - name: Build solution
               run: dotnet build --configuration Release --no-restore
-              working-directory: src
-    
-    deploy_docker_hub:
-      name: Push to DockerHub
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-
-        - name: Setup .NET Core
-          uses: actions/setup-dotnet@v3
-          with:
-            dotnet-version: '8.0.x'
-
-        - name: Login DockerHub
-          uses: docker/login-action@v2
-          with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-        - name: Build Image
-          run: |
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/hackathon-servico-agendamento:latest -f src/Postech.Hackathon.Agendamentos.Api/Dockerfile .
-
-        - name: Push Image
-          run: |
-            docker push ${{ secrets.DOCKERHUB_USERNAME }}/hackathon-servico-agendamento:latest            
+              working-directory: src           
 
     unit_test:
         name: Unit Tests
