@@ -34,4 +34,13 @@ internal static class ExcecaoDominioExtensoes
             _ => SituacaoAceitacaoAgendamento.DadosInvalidos
         };
     }
+
+    public static SituacaoRecusaAgendamento ObterSituacaoRecusaAgendamento(this ExcecaoDominio excecao)
+    {
+        return excecao.Propriedade switch
+        {
+            nameof(Agendamento.Situacao) => SituacaoRecusaAgendamento.RecusaNaoProcessavel,
+            _ => SituacaoRecusaAgendamento.DadosInvalidos
+        };
+    }
 }

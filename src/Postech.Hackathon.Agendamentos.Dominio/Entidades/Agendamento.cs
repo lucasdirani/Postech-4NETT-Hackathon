@@ -162,6 +162,10 @@ public class Agendamento : EntidadeBase
 
     public void RecusarAgendamento(DateOnly dataRecusaAgendamento, string justificativaRecusa)
     {
+        if (string.IsNullOrEmpty(justificativaRecusa))
+        {
+            throw new ExcecaoDominio("A justificativa da recusa é obrigatória", nameof(RecusarAgendamento), nameof(justificativaRecusa));
+        }
         if (dataRecusaAgendamento >= Data)
         {
             throw new ExcecaoDominio("A data de recusa deve ser anterior a data do agendamento", nameof(RecusarAgendamento), nameof(dataRecusaAgendamento));
@@ -178,6 +182,10 @@ public class Agendamento : EntidadeBase
 
     public void CancelarAgendamento(DateOnly dataCancelamentoAgendamento, string justificativaCancelamento)
     {
+        if (string.IsNullOrEmpty(justificativaCancelamento))
+        {
+            throw new ExcecaoDominio("A justificativa do cancelamento é obrigatória", nameof(CancelarAgendamento), nameof(justificativaCancelamento));
+        }
         if (dataCancelamentoAgendamento >= Data)
         {
             throw new ExcecaoDominio("A data de cancelamento deve ser anterior a data do agendamento", nameof(CancelarAgendamento), nameof(dataCancelamentoAgendamento));
