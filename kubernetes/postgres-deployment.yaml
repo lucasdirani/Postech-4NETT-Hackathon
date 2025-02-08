@@ -56,19 +56,10 @@ spec:
     spec:
       containers:
         - name: container-postgres-db
-          image: lruizd/hackathon-postgres-db:latest
+          image: postgres:latest
           ports:
             - name: "db-port"
               containerPort: 5432
-          livenessProbe:
-            exec:
-              command:
-              - /bin/sh
-              - -c
-              - |
-                PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -d $POSTGRES_DB -c "SELECT * FROM agendamentos.tb_agendamentos LIMIT 1;" || exit 1
-            initialDelaySeconds: 20
-            periodSeconds: 20
           env:
             - name: POSTGRES_DB
               valueFrom:
