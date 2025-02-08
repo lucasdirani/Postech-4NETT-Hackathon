@@ -175,6 +175,7 @@ public class Agendamento : EntidadeBase
             ModificadoEm = DateTime.UtcNow;
             JustificativaRecusa = justificativaRecusa;
             Situacao = SituacaoAgendamento.Recusado;
+            Ativo = false;
             return;
         }
         throw new ExcecaoDominio("O agendamento não pode ser recusado", nameof(RecusarAgendamento), nameof(Situacao));     
@@ -195,6 +196,7 @@ public class Agendamento : EntidadeBase
             ModificadoEm = DateTime.UtcNow;
             JustificativaCancelamento = justificativaCancelamento;
             Situacao = SituacaoAgendamento.Cancelado;
+            Ativo = false;
             return;
         }
         throw new ExcecaoDominio("O agendamento não pode ser cancelado", nameof(CancelarAgendamento), nameof(Situacao));     

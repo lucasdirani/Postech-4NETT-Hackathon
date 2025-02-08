@@ -30,7 +30,7 @@ public class RepositorioAgendamento(AgendamentoDbContext dbContext) : IRepositor
 
     public async Task<IReadOnlyList<Agendamento>> ConsultarAgendamentosMedicoAsync(Guid idMedico, DateOnly dataAgendamento)
     {
-        return await _dbContext.Agendamentos.Where(a => a.IdMedico == idMedico && a.Data == dataAgendamento).ToListAsync();
+        return await _dbContext.Agendamentos.Where(a => a.IdMedico == idMedico && a.Data == dataAgendamento && a.Ativo).ToListAsync();
     }
 
     public async Task<(IReadOnlyList<ProjecaoConsultaAgendamentosPorIdMedico>, int)> ConsultarAgendamentosMedicoAsync(Guid idMedico, int pagina, int tamanhoPagina)

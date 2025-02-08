@@ -37,6 +37,12 @@ internal class ConfigAgendamento : IEntityTypeConfiguration<Agendamento>
             .HasColumnType("uuid")
             .IsRequired();
         builder
+            .Property(a => a.Ativo)
+            .HasColumnName("Ativo")
+            .HasColumnType("boolean")
+            .HasDefaultValue(true)
+            .IsRequired();
+        builder
             .Property(a => a.IdPaciente)
             .HasColumnName("Id_Paciente")
             .HasColumnType("uuid");
@@ -78,7 +84,10 @@ internal class ConfigAgendamento : IEntityTypeConfiguration<Agendamento>
             .HasMaxLength(60)
             .HasColumnName("Justificativa_Cancelamento");
         builder
-            .HasIndex(a => new { a.IdMedico, a.Data })
-            .HasDatabaseName("ix_tb_agendamentos_id_medico_data");
+            .HasIndex(a => new { a.IdMedico, a.Data, a.Ativo })
+            .HasDatabaseName("ix_tb_agendamentos_id_medico_data_ativo");
+        builder
+            .HasIndex(a => new { a.IdPaciente, a.Data, a.Situacao })
+            .HasDatabaseName("ix_tb_agendamentos_id_paciente_data_situacao");
     }
 }

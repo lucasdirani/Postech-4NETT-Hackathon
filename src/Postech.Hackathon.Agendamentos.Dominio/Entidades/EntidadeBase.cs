@@ -8,11 +8,13 @@ public abstract class EntidadeBase
     public Guid Id { get; }
     public DateTime CriadoEm { get; protected set; }
     public DateTime ModificadoEm { get; protected set; }
+    public bool Ativo { get; protected set; }
     
     protected EntidadeBase()
     {
         Id = Guid.NewGuid();
         CriadoEm = DateTime.UtcNow;
         ModificadoEm = DateTime.UtcNow;
+        Ativo = true;
     }
 }

@@ -33,6 +33,7 @@ public class AgendamentoTestes
         agendamento.HorarioFim.Should().Be(horarioFimAgendamento);
         agendamento.Valor.Should().Be(valorAgendamento);
         agendamento.Situacao.Should().Be(SituacaoAgendamento.Criado);
+        agendamento.Ativo.Should().BeTrue();
     }
 
     [Fact(DisplayName = "Identificador inválido para o médico que cadastrou o agendamento")]
@@ -894,6 +895,7 @@ public class AgendamentoTestes
         agendamento.Situacao.Should().Be(SituacaoAgendamento.Recusado);
         agendamento.JustificativaRecusa.Should().Be(justificativaRecusa);
         agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
+        agendamento.Ativo.Should().BeFalse();
     }
 
     [Fact(DisplayName = "Situação inválida para recusar o agendamento")]
@@ -1021,6 +1023,7 @@ public class AgendamentoTestes
         agendamento.Situacao.Should().Be(SituacaoAgendamento.Cancelado);
         agendamento.JustificativaCancelamento.Should().Be(justificativaCancelamento);
         agendamento.ModificadoEm.Should().BeOnOrBefore(DateTime.UtcNow);
+        agendamento.Ativo.Should().BeFalse();
     }
 
     [Fact(DisplayName = "Situação inválida para cancelar o agendamento")]
