@@ -124,4 +124,35 @@ public class ConsultaAgendamentosPorIdMedicoCasoUsoTestes
         saida.SituacaoConsultaAgendamentosPorIdMedico.Should().Be(SituacaoConsultaAgendamentosPorIdMedico.DadosInvalidos);
         repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, pagina, tamanhoPagina), Times.Never());
     }
+
+    [Fact(DisplayName = "Número da página inválido para a consulta de agendamentos")]
+    [Trait("Action", "ExecutarAsync")]
+    public async Task ExecutarAsync_NumeroPaginaInvalido_NaoDeveConsultarAgendamentosMedico()
+    {
+        // Arrange
+        Guid idMedico = Guid.Empty; 
+        int pagina = 0;
+        int tamanhoPagina = 10;
+        ConsultaAgendamentosPorIdMedicoEntrada entrada = new()
+        {
+            IdMedico = idMedico,
+            Pagina = pagina,
+            TamanhoPagina = tamanhoPagina
+        };
+        Mock<IRepositorioAgendamento> repositorio = new(); 
+        ConsultaAgendamentosPorIdMedicoCasoUso casoUso = new(repositorio.Object);
+
+        // Act
+        ConsultaAgendamentosPorIdMedicoSaida saida = await casoUso.ExecutarAsync(entrada);
+
+        // Assert
+        saida.Agendamentos.Should().BeNullOrEmpty();
+        saida.QuantidadeItens.Should().Be(0);
+        saida.TotalPaginas.Should().Be(0);
+        saida.Mensagem.Should().NotBeNullOrEmpty();
+        saida.PaginaAtual.Should().Be(pagina);
+        saida.TamanhoPagina.Should().Be(tamanhoPagina);
+        saida.SituacaoConsultaAgendamentosPorIdMedico.Should().Be(SituacaoConsultaAgendamentosPorIdMedico.DadosInvalidos);
+        repositorio.Verify(r => r.ConsultarAgendamentosMedicoAsync(idMedico, pagina, tamanhoPagina), Times.Never());
+    }
 }
