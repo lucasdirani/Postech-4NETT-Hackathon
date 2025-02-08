@@ -810,4 +810,47 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
         conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
     }
+
+    [Fact(DisplayName = "Requisição para consultar os agendamentos do médico no endpoint /agendamentos")]
+    [Trait("Action", "GET /agendamentos")]
+    public async Task GetAgendamentos_RequisicaoValidaConsultaAgendamentosMedico_DeveRetornar200Ok()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        decimal valorAgendamento = 100;
+        List<Agendamento> agendamentos =
+        [
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(9, 0, 0), horarioFimAgendamento: new(9, 30, 0), dataAtual, valorAgendamento),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(9, 30, 0), horarioFimAgendamento: new(10, 0, 0), dataAtual, valorAgendamento),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(10, 0, 0), horarioFimAgendamento: new(10, 30, 0), dataAtual, valorAgendamento),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(10, 30, 0), horarioFimAgendamento: new(11, 0, 0), dataAtual, valorAgendamento),
+            new(idMedico, dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(12, 0, 0), horarioFimAgendamento: new(12, 30, 0), dataAtual, valorAgendamento),
+        ];
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamentos);
+        await repositorio.SalvarAlteracoesAsync();
+        ComandoRequisicaoConsultaAgendamentosPorIdMedico comandoRequisicao = new();
+        int pagina = 1;
+        int tamanhoPagina = 5; 
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
+        });
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.OK);
+        ComandoRespostaGenerico<ComandoRespostaConsultaAgendamentosPorIdMedico>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaConsultaAgendamentosPorIdMedico>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Agendamentos.Should().HaveSameCount(agendamentos);
+        conteudoMensagemResposta.Dados.PaginaAtual.Should().Be(pagina);
+        conteudoMensagemResposta.Dados.TamanhoPagina.Should().Be(tamanhoPagina);
+        conteudoMensagemResposta.Dados.QuantidadeItens.Should().Be(agendamentos.Count);
+        conteudoMensagemResposta.Dados.TotalPaginas.Should().BeGreaterThan(0);
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeTrue();
+        conteudoMensagemResposta.Mensagens.Should().BeNullOrEmpty();
+    }
 }

@@ -9,6 +9,7 @@ using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Adaptadores;
 using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos;
 using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos.Constantes;
 using Postech.Hackathon.Agendamentos.Infra.Http.Interfaces;
+using Postech.Hackathon.Agendamentos.Infra.Http.Requisicoes.Extensoes;
 
 namespace Postech.Hackathon.Agendamentos.Infra.Controladores.Http;
 
@@ -16,7 +17,7 @@ public class ControladorAgendamentos
 {
     public ControladorAgendamentos(IHttp http)
     {
-        http.On<ComandoRequisicaoCadastroAgendamento, ComandoRespostaCadastroAgendamento>(HttpMethod.Post.ToString(), "/agendamentos", async (corpo, valoresRota, serviceProvider) =>
+        http.On<ComandoRequisicaoCadastroAgendamento, ComandoRespostaCadastroAgendamento>(HttpMethod.Post.ToString(), "/agendamentos", async (corpo, valoresRota, valoresConsulta, serviceProvider) =>
         {
             INotificador notificador = serviceProvider.GetRequiredService<INotificador>();
             if (corpo is null)
@@ -28,7 +29,7 @@ public class ControladorAgendamentos
             CadastroAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaCadastroAgendamentoEntrada());
             return AdaptadorCadastroAgendamento.Adaptar(saida);
         });
-        http.On<ComandoRequisicaoEdicaoAgendamento, ComandoRespostaEdicaoAgendamento>(HttpMethod.Put.ToString(), "/agendamentos/{idAgendamento}", async (corpo, valoresRota, serviceProvider) =>
+        http.On<ComandoRequisicaoEdicaoAgendamento, ComandoRespostaEdicaoAgendamento>(HttpMethod.Put.ToString(), "/agendamentos/{idAgendamento}", async (corpo, valoresRota, valoresConsulta, serviceProvider) =>
         {
             INotificador notificador = serviceProvider.GetRequiredService<INotificador>();
             if (corpo is null)
@@ -41,7 +42,7 @@ public class ControladorAgendamentos
             EdicaoAgendamentoSaida saida = await casoUso.ExecutarAsync(corpo.ConverterParaEdicaoAgendamentoEntrada(idAgendamento));
             return AdaptadorEdicaoAgendamento.Adaptar(saida);
         });
-        http.On<ComandoRequisicaoConfirmacaoAgendamento, ComandoRespostaConfirmacaoAgendamento>(HttpMethod.Patch.ToString(), "/agendamentos/{idAgendamento}", async (corpo, valoresRota, serviceProvider) =>
+        http.On<ComandoRequisicaoConfirmacaoAgendamento, ComandoRespostaConfirmacaoAgendamento>(HttpMethod.Patch.ToString(), "/agendamentos/{idAgendamento}", async (corpo, valoresRota, valoresConsulta, serviceProvider) =>
         {
             INotificador notificador = serviceProvider.GetRequiredService<INotificador>();
             if (corpo is null)
@@ -63,6 +64,12 @@ public class ControladorAgendamentos
                 return AdaptadorEfetuacaoAgendamento.Adaptar(saida);
             }
             return new();
+        });
+        http.On<ComandoRequisicaoConsultaAgendamentosPorIdMedico, ComandoRespostaConsultaAgendamentosPorIdMedico>(HttpMethod.Get.ToString(), "/agendamentos", async (corpo, valoresRota, valoresConsulta, serviceProvider) =>
+        {
+            IConsultaAgendamentosPorIdMedicoCasoUso casoUso = serviceProvider.GetRequiredService<IConsultaAgendamentosPorIdMedicoCasoUso>();
+            ConsultaAgendamentosPorIdMedicoSaida saida = await casoUso.ExecutarAsync(valoresConsulta.ConverterParaCadastroAgendamentoEntrada());
+            return AdaptadorConsultaAgendamentosPorIdMedico.Adaptar(saida);
         });
     }
 }
