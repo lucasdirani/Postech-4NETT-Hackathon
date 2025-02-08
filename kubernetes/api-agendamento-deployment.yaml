@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hackathon-api-agendamento
+  labels:
+    app: hackathon-api-agendamento
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hackathon-api-agendamento
+  template:
+    metadata:
+      labels:
+        app: hackathon-api-agendamento
+    spec:
+      containers:
+        - name: container-hackathon-api-agendamento
+          image: lruizd/hackathon-servico-agendamento:latest
+          ports:
+            - containerPort: 5060
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Kubernetes"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-hackathon-api-agendamento
+  labels:
+    app: hackathon-api-agendamento
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 5060
+      nodePort: 31199
+  selector:
+    app: hackathon-api-agendamento
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-hackathon-api-agendamento
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hackathon-api-agendamento
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Hackathon.Agendamentos.Dominio", "Postech.Hackathon.Agendamentos.Dominio\Postech.Hackathon.Agendamentos.Dominio.csproj", "{CAC72AA0-7256-4962-8896-330EF723E928}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Hackathon.Agendamentos.Infra", "Postech.Hackathon.Agendamentos.Infra\Postech.Hackathon.Agendamentos.Infra.csproj", "{9BBA6CB6-1EB8-43D7-B746-D449ADEA2AC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Hackathon.Agendamentos.Aplicacao", "Postech.Hackathon.Agendamentos.Aplicacao\Postech.Hackathon.Agendamentos.Aplicacao.csproj", "{FB94CC29-C057-4E0A-8C2E-250766F2CF29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Hackathon.Agendamentos.Api", "Postech.Hackathon.Agendamentos.Api\Postech.Hackathon.Agendamentos.Api.csproj", "{D79E79B8-27B6-436A-8501-15AE08E77B6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Hackathon.Agendamentos.TestesUnitarios", "..\testes\Postech.Hackathon.Agendamentos.TestesUnitarios\Postech.Hackathon.Agendamentos.TestesUnitarios.csproj", "{2374CAFD-5FDC-492E-84C6-5B24D3237FBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Hackathon.Agendamentos.TestesIntegrados", "..\testes\Postech.Hackathon.Agendamentos.TestesIntegrados\Postech.Hackathon.Agendamentos.TestesIntegrados.csproj", "{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAC72AA0-7256-4962-8896-330EF723E928}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAC72AA0-7256-4962-8896-330EF723E928}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAC72AA0-7256-4962-8896-330EF723E928}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAC72AA0-7256-4962-8896-330EF723E928}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BBA6CB6-1EB8-43D7-B746-D449ADEA2AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BBA6CB6-1EB8-43D7-B746-D449ADEA2AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BBA6CB6-1EB8-43D7-B746-D449ADEA2AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BBA6CB6-1EB8-43D7-B746-D449ADEA2AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB94CC29-C057-4E0A-8C2E-250766F2CF29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB94CC29-C057-4E0A-8C2E-250766F2CF29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB94CC29-C057-4E0A-8C2E-250766F2CF29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB94CC29-C057-4E0A-8C2E-250766F2CF29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D79E79B8-27B6-436A-8501-15AE08E77B6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D79E79B8-27B6-436A-8501-15AE08E77B6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D79E79B8-27B6-436A-8501-15AE08E77B6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D79E79B8-27B6-436A-8501-15AE08E77B6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2374CAFD-5FDC-492E-84C6-5B24D3237FBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2374CAFD-5FDC-492E-84C6-5B24D3237FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2374CAFD-5FDC-492E-84C6-5B24D3237FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2374CAFD-5FDC-492E-84C6-5B24D3237FBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D9FFE8D-25B3-4C81-8D16-DF7B2E4B21BB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
