@@ -592,6 +592,28 @@ public class AgendamentoTestes
         pertenceMedico.Should().BeTrue();
     }
 
+    [Fact(DisplayName = "Agendamento que pertence ao paciente atendido")]
+    [Trait("Action", "PertencePaciente")]
+    public void PertencePaciente_AgendamentoPertencePacienteAtendido_DeveRetornarVerdadeiro()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 1));
+
+        // Act
+        bool pertencePaciente = agendamento.PertencePaciente(idPaciente);
+
+        // Assert
+        pertencePaciente.Should().BeTrue();
+    }
+
     [Fact(DisplayName = "Agendamento que não pertence ao médico que realizou o seu cadastro")]
     [Trait("Action", "PertenceMedico")]
     public void PertenceMedico_AgendamentoNaoPertenceMedicoRealizouCadastro_DeveRetornarFalso()
@@ -610,6 +632,28 @@ public class AgendamentoTestes
 
         // Assert
         pertenceMedico.Should().BeFalse();
+    }
+
+    [Fact(DisplayName = "Agendamento que não pertence ao paciente atendido")]
+    [Trait("Action", "PertencePaciente")]
+    public void PertenceMedico_AgendamentoNaoPertencePacienteAtendido_DeveRetornarFalso()
+    {
+        // Arrange
+        Guid idMedico = Guid.NewGuid();
+        Guid idPaciente = Guid.NewGuid();
+        DateOnly dataAtual = new(2025, 2, 1);
+        DateOnly dataAgendamento = new(2025, 2, 2);
+        TimeSpan horarioInicioAgendamento = new(12, 0, 0);
+        TimeSpan horarioFimAgendamento = new(12, 30, 0);
+        decimal valorAgendamento = 100;
+        Agendamento agendamento = new(idMedico, dataAgendamento, horarioInicioAgendamento, horarioFimAgendamento, dataAtual, valorAgendamento);
+        agendamento.EfetuarAgendamento(idPaciente, dataEfetuacaoAgendamento: new(2025, 2, 1));
+
+        // Act
+        bool pertencePaciente = agendamento.PertencePaciente(idPaciente: Guid.NewGuid());
+
+        // Assert
+        pertencePaciente.Should().BeFalse();
     }
 
     [Fact(DisplayName = "Efetuar agendamento com situação válida")]

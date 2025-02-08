@@ -199,4 +199,9 @@ public class Agendamento : EntidadeBase
         }
         throw new ExcecaoDominio("O agendamento não pode ser cancelado", nameof(CancelarAgendamento), nameof(Situacao));     
     }
+
+    public bool PertencePaciente(Guid idPaciente)
+    {
+        return IdPaciente == idPaciente;
+    }
 }
