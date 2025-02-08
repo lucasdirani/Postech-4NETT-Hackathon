@@ -1,0 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
+namespace Postech.Hackathon.Agendamentos.TestesIntegrados.Auxiliares;
+
+[ExcludeFromCodeCoverage]
+public static class BearerTokenAuxiliar
+{
+    public static readonly string TokenValido = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhZG1pbiIsImlhdCI6MTczOTAyNDQ2NiwiZXhwIjoxNzcwNTYyMjY2LCJhdWQiOiJ0ZXN0ZS1hdWRpZW5jZSIsInN1YiI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJJZCI6IjA3ZjhhMDEyLTRlNTAtNGRiZi05NzNiLTFiODBjNTE5MWYyYSIsIk5hbWUiOiJMdWl6IFNvdXphIn0.fHMEO2QFw0mAeJQVNTaamOvu1t1KRBo9BBK04iowDWA";
+}

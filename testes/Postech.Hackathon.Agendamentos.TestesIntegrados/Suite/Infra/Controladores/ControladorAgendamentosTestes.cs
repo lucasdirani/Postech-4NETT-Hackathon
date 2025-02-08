@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Xml.Serialization;
@@ -8,6 +9,7 @@ using Postech.Hackathon.Agendamentos.Dominio.Repositorios;
 using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos;
 using Postech.Hackathon.Agendamentos.Infra.Controladores.Http.Comandos.Constantes;
 using Postech.Hackathon.Agendamentos.Infra.Http.Deserializadores.Extensoes;
+using Postech.Hackathon.Agendamentos.TestesIntegrados.Auxiliares;
 using Postech.Hackathon.Agendamentos.TestesIntegrados.Configuracoes.Base;
 using Postech.Hackathon.Agendamentos.TestesIntegrados.Fixtures;
 
@@ -29,12 +31,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             HoraFim = new TimeSpan(12, 30, 0),
             Valor = 100
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"/agendamentos")
+        HttpRequestMessage requisicao = new(HttpMethod.Post, $"/agendamentos")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -50,8 +54,12 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
     [Trait("Action", "POST /agendamentos")]
     public async Task PostAgendamentos_RequisicaoSemCorpoCadastroAgendamento_DeveRetornar400BadRequest()
     {
+        // Arrange
+        HttpRequestMessage requisicao = new(HttpMethod.Post, $"/agendamentos");
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+
         // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"/agendamentos"));
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -78,12 +86,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         XmlSerializer serializador = new(typeof(ComandoRequisicaoCadastroAgendamento));
         using StringWriter stringWriter = new();
         serializador.Serialize(stringWriter, comandoRequisicao);
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"/agendamentos")
+        HttpRequestMessage requisicao = new(HttpMethod.Post, $"/agendamentos")
         {
             Content = new StringContent(stringWriter.ToString(), Encoding.UTF8, "application/xml"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnsupportedMediaType);
@@ -117,12 +127,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             Valor = valorAgendamento,
             DataAtual = dataAtual
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"/agendamentos")
+        HttpRequestMessage requisicao = new(HttpMethod.Post, $"/agendamentos")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -146,12 +158,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             HoraFim = new TimeSpan(12, 30, 0),
             Valor = 0
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"/agendamentos")
+        HttpRequestMessage requisicao = new HttpRequestMessage(HttpMethod.Post, $"/agendamentos")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -186,12 +200,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             HoraFim = new TimeSpan(9, 30, 0),
             Valor = 200
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Put, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Put, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -208,9 +224,11 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
     {
         // Arrange
         Guid idAgendamento = Guid.NewGuid();
+        HttpRequestMessage requisicao = new(HttpMethod.Put, $"/agendamentos/{idAgendamento}");
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
         
         // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Put, $"/agendamentos/{idAgendamento}"));
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -245,12 +263,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             HoraFim = new TimeSpan(8, 30, 0),
             Valor = 0
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Put, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Put, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -285,12 +305,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             HoraFim = new TimeSpan(15, 30, 0),
             Valor = 50
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Put, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Put, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -316,12 +338,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             HoraFim = new TimeSpan(15, 30, 0),
             Valor = 50
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Put, $"/agendamentos/{idAgendamento}")
+        HttpRequestMessage requisicao = new(HttpMethod.Put, $"/agendamentos/{idAgendamento}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -366,12 +390,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             HoraFim = new TimeSpan(12, 30, 0),
             Valor = 150
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Put, $"/agendamentos/{agendamentoEmEdicao.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Put, $"/agendamentos/{agendamentoEmEdicao.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -408,12 +434,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             HoraFim = new TimeSpan(15, 30, 0),
             Valor = 50
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Put, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Put, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
@@ -446,12 +474,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = idMedico,
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -484,12 +514,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = idPaciente,
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -506,9 +538,11 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
     {
         // Arrange
         Guid idAgendamento = Guid.NewGuid();
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{idAgendamento}");
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
         
         // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{idAgendamento}"));
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -541,12 +575,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = idMedico,
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today)
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -579,12 +615,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = idPaciente,
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today)
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -617,12 +655,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = Guid.NewGuid(),
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -646,12 +686,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = idMedico,
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{idAgendamento}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{idAgendamento}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -675,12 +717,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = idPaciente,
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{idAgendamento}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{idAgendamento}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -717,12 +761,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = idPaciente,
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -756,12 +802,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = idMedico,
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
@@ -795,12 +843,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             IdUsuario = idPaciente,
             DataConfirmacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2))
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Patch, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
@@ -833,12 +883,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         ComandoRequisicaoConsultaAgendamentosPorIdMedico comandoRequisicao = new();
         int pagina = 1;
         int tamanhoPagina = 5; 
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}")
+        HttpRequestMessage requisicao = new(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -862,9 +914,11 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         Guid idMedico = Guid.Empty;
         int pagina = 0;
         int tamanhoPagina = 0; 
+        HttpRequestMessage requisicao = new(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}");
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
         
         // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}"));
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -896,9 +950,11 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         Guid idMedico = Guid.NewGuid();
         int pagina = 1;
         int tamanhoPagina = 5; 
+        HttpRequestMessage requisicao = new(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}");
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
         
         // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}"));
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -932,12 +988,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
             Justificativa = "Estarei em plantão no hospital"
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -972,12 +1030,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
             Justificativa = "Reunião importante no trabalho"
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -994,9 +1054,11 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
     {
         // Arrange
         Guid idAgendamento = Guid.NewGuid();
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{idAgendamento}");
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
         
         // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{idAgendamento}"));
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -1030,12 +1092,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today),
             Justificativa = string.Empty
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -1070,12 +1134,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today),
             Justificativa = string.Empty
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -1109,12 +1175,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
             Justificativa = "Estarei em plantão no hospital"
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -1149,12 +1217,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
             Justificativa = "Reunião importante no trabalho"
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -1179,12 +1249,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
             Justificativa = "Estarei em plantão no hospital"
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{idAgendamento}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{idAgendamento}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -1209,12 +1281,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
             Justificativa = "Reunião importante no trabalho"
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{idAgendamento}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{idAgendamento}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -1249,12 +1323,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
             Justificativa = "Problemas familiares"
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
@@ -1290,12 +1366,14 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
             DataAnulacao = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
             Justificativa = "Reunião importante no trabalho"
         };
-        
-        // Act
-        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
+        HttpRequestMessage requisicao = new(HttpMethod.Delete, $"/agendamentos/{agendamento.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(comandoRequisicao), Encoding.UTF8, "application/json"),
-        });
+        };
+        requisicao.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerTokenAuxiliar.TokenValido);
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(requisicao);
 
         // Assert
         mensagemResposta.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
