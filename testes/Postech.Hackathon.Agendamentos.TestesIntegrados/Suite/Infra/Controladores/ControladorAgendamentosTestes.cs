@@ -874,4 +874,38 @@ public class ControladorAgendamentosTestes(IntegrationTestFixture fixture) : Bas
         conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
         conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
     }
+
+    [Fact(DisplayName = "Agendamentos não encontrados no endpoint /agendamentos")]
+    [Trait("Action", "GET /agendamentos")]
+    public async Task GetAgendamentos_AgendamentosNaoEncontrados_DeveRetornar404NotFound()
+    {
+        // Arrange
+        DateOnly dataAtual = new(2025, 2, 1);
+        decimal valorAgendamento = 100;
+        List<Agendamento> agendamentos =
+        [
+            new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(9, 0, 0), horarioFimAgendamento: new(9, 30, 0), dataAtual, valorAgendamento),
+            new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(9, 30, 0), horarioFimAgendamento: new(10, 0, 0), dataAtual, valorAgendamento),
+            new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(10, 0, 0), horarioFimAgendamento: new(10, 30, 0), dataAtual, valorAgendamento),
+            new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(10, 30, 0), horarioFimAgendamento: new(11, 0, 0), dataAtual, valorAgendamento),
+            new(idMedico: Guid.NewGuid(), dataAgendamento: new(2025, 2, 2), horarioInicioAgendamento: new(12, 0, 0), horarioFimAgendamento: new(12, 30, 0), dataAtual, valorAgendamento),
+        ];
+        IRepositorioAgendamento repositorio = ObterServico<IRepositorioAgendamento>();
+        await repositorio.InserirAsync(agendamentos);
+        await repositorio.SalvarAlteracoesAsync();
+        Guid idMedico = Guid.NewGuid();
+        int pagina = 1;
+        int tamanhoPagina = 5; 
+        
+        // Act
+        using HttpResponseMessage mensagemResposta = await ClienteHttp.SendAsync(new HttpRequestMessage(HttpMethod.Get, $"/agendamentos?idMedico={idMedico}&pagina={pagina}&tamanhoPagina={tamanhoPagina}"));
+
+        // Assert
+        mensagemResposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        ComandoRespostaGenerico<ComandoRespostaConsultaAgendamentosPorIdMedico>? conteudoMensagemResposta = await mensagemResposta.Content.AsAsync<ComandoRespostaGenerico<ComandoRespostaConsultaAgendamentosPorIdMedico>>();
+        conteudoMensagemResposta.Should().NotBeNull();
+        conteudoMensagemResposta.Dados.Should().BeNull();
+        conteudoMensagemResposta.FoiProcessadoComSucesso.Should().BeFalse();
+        conteudoMensagemResposta.Mensagens.Should().NotBeNullOrEmpty();
+    }
 }

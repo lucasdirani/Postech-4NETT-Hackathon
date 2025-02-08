@@ -31,6 +31,11 @@ public static class AdaptadorConsultaAgendamentosPorIdMedico
                 CodigoResposta = (int)HttpStatusCode.BadRequest,
                 Mensagens = [new Notificacao() { Mensagem = "Uma ou mais propriedades estão inválidas", Tipo = TipoNotificacao.Erro }]
             },
+            SituacaoConsultaAgendamentosPorIdMedico.AgendamentoNaoEncontrado => new()
+            {
+                CodigoResposta = (int)HttpStatusCode.NotFound,
+                Mensagens = [new Notificacao() { Mensagem = "Os agendamentos não foram encontrados", Tipo = TipoNotificacao.Erro }]
+            },
             _ => throw new NotImplementedException(),
         };
     }
