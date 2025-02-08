@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <NoWarn>ASP0015</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +33,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Postech.Hackathon.Agendamentos.Dominio\Postech.Hackathon.Agendamentos.Dominio.csproj" />
     <ProjectReference Include="..\..\src\Postech.Hackathon.Agendamentos.Aplicacao\Postech.Hackathon.Agendamentos.Aplicacao.csproj" />
+    <ProjectReference Include="..\..\src\Postech.Hackathon.Agendamentos.Infra\Postech.Hackathon.Agendamentos.Infra.csproj" />
   </ItemGroup>
 
 </Project>

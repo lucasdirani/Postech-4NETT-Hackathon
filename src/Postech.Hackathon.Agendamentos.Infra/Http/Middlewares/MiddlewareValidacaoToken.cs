@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Postech.Hackathon.Agendamentos.Infra.Http.Clientes;
@@ -7,7 +6,6 @@ using Refit;
 
 namespace Postech.Hackathon.Agendamentos.Infra.Http.Middlewares;
 
-[ExcludeFromCodeCoverage]
 public class MiddlewareValidacaoToken(RequestDelegate next, IClienteMicrosservicoAutenticacao microsservicoAutenticacao)
 {
     private readonly RequestDelegate _next = next;
