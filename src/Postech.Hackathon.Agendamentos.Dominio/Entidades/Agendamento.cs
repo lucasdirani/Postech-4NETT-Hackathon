@@ -161,6 +161,10 @@ public class Agendamento : EntidadeBase
 
     public void RecusarAgendamento(DateOnly dataRecusaAgendamento, string justificativaRecusa)
     {
+        if (dataRecusaAgendamento >= Data)
+        {
+            throw new ExcecaoDominio("A data de recusa deve ser anterior a data do agendamento", nameof(RecusarAgendamento), nameof(dataRecusaAgendamento));
+        }
         if (AgendamentoFoiEfetuado())
         {
             ModificadoEm = DateTime.UtcNow;
